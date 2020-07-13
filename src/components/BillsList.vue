@@ -1,5 +1,5 @@
 <template>
-    <div v-if="this.room.id">
+    <form v-if="this.room.id">
         <h4>Room {{this.room.name}}</h4>
         <h6 v-if="bills.length == 0">No bill found</h6>
         <div v-else>
@@ -32,7 +32,7 @@
             </table>
             <button class="btn btn-danger" v-on:click="deleteBill">Delete</button>
         </div>
-    </div>
+    </form>
 </template>
 <script>
     import http from "../http-common";
@@ -148,5 +148,12 @@
     .active {
         background: #9cb4ff;
         font-weight: bold;
+    }
+    .btn-danger {
+        float: right;
+        margin-top: 5px;
+    }
+    form{
+        float: left;
     }
 </style>
