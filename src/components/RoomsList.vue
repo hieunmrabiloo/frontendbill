@@ -1,7 +1,7 @@
 <template>
     <div class="list row">
         <div class="col-md-6">
-            <button type="button" class="btn btn-primary">
+            <button class="btn btn-primary" type="button">
                 Room List <span class="badge badge-light">{{rooms.length}}</span>
             </button>
             <ul>
@@ -20,7 +20,8 @@
                         <router-link :to="{
                         name: 'list-bill',
                         params: {room: room, id: room.id}
-                    }">
+                        }"
+                        >
                             List Bill
                         </router-link>
                     </div>
@@ -40,11 +41,15 @@
         name: "RoomsList",
         data() {
             return {
+                selectedRoom: "1",
                 rooms: []
             };
         },
         methods: {
             /* eslint-disable no-console */
+            handleChangeRoom(id) {
+                this.selectedRoom = id;
+            },
             retrieveRooms() {
                 http
                     .get("/rooms")
@@ -60,7 +65,8 @@
                 this.retrieveRooms();
             }
             /* eslint-enable no-console */
-        },
+        }
+        ,
         mounted() {
             this.retrieveRooms();
         }
@@ -73,16 +79,20 @@
         max-width: 600px;
         margin: auto;
     }
-    li{
+
+    li {
         display: flex;
     }
-    .custom-div{
-        margin:0 3px 0px 3px;
+
+    .custom-div {
+        margin: 0 3px 0px 3px;
     }
-    .badge{
+
+    .badge {
         margin-top: 3px;
     }
-    .btn-primary{
+
+    .btn-primary {
         margin-bottom: 13px;
     }
 </style>

@@ -126,7 +126,6 @@
                             this.waterNum = response.data.waterNum;
                             this.waterPrice = response.data.waterPrice;
                             console.log(response.data);
-                            this.$router.push('/rooms');
                         })
                         .catch(e => {
                             console.log(e);
@@ -137,13 +136,11 @@
                         .then(response => {
                             this.id = response.data.id;
                             console.log(response.data);
-                            this.$router.push('/rooms');
                         })
                         .catch(e => {
                             console.log(e);
                         });
                 }
-                this.submitted = true;
             },
             getMonthByMonthAndRoomId() {
                 http

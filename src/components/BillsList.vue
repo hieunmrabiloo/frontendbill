@@ -1,6 +1,6 @@
 <template>
-    <form v-if="this.room.id">
-        <h4>Room {{this.room.name}}</h4>
+    <form v-if="this.selectedRoom">
+<!--        <h4>Roo {{this.room.name}}m</h4>-->
         <h6 v-if="bills.length == 0">No bill found</h6>
         <div v-else>
             <table id="table">
@@ -42,15 +42,29 @@
         data: function () {
             return {
                 id: 0,
+                selectedRoom: "",
                 activate_index: null,
                 bills: []
             }
         },
+        watch: {
+            $route(val) {
+                this.selectedRoom = val.params.id;
+                this.getBillByRoomId(val.params.id);
+            }
+        },
+        mounted() {
+            this.selectedRoom = this.$route.params.id;
+            this.getBillByRoomId(this.selectedRoom);
+        },
         props: ["room"],
         methods: {
-            getBillByRoomId() {
+            handleChangeRoom(id) {
+                this.selectedRoom = id;
+            },
+            getBillByRoomId(roomId){
                 http
-                    .get("/bill/" + this.room.id)
+                    .get("/bill/" + roomId)
                     .then(response => {
                         this.bills = response.data;
                         console.log(response.data);
@@ -62,10 +76,8 @@
             deleteBill() {
                 http
                     .delete("/bill/delete/" + this.id)
-                    .then(response => {
-                        console.log(response.data);
-                        this.$emit("refreshData");
-                        this.$router.push('/rooms');
+                    .then(() => {
+                        this.getBillByRoomId(this.selectedRoom);
                     })
                     .catch(e => {
                         console.log(e);
@@ -79,14 +91,7 @@
                 this.id = id;
             }
         },
-        watch: {
-            room() {
-                this.getBillByRoomId();
-            }
-        },
-        mounted() {
-            this.getBillByRoomId();
-        }
+
     };
 </script>
 
