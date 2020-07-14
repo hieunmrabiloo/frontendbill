@@ -2,7 +2,7 @@
     <div class="list row">
         <div class="col-md-6">
             <button class="btn btn-primary" type="button">
-                Room List <span class="badge badge-light">{{rooms.length}}</span>
+                <i class="fa fa-list-ul" aria-hidden="true"></i> Room List <span class="badge badge-light">{{rooms.length}}</span>
             </button>
             <ul>
                 <li :key="index" v-for="(room, index) in rooms">
@@ -47,9 +47,6 @@
         },
         methods: {
             /* eslint-disable no-console */
-            handleChangeRoom(id) {
-                this.selectedRoom = id;
-            },
             retrieveRooms() {
                 http
                     .get("/rooms")

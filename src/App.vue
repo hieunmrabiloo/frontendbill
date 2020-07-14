@@ -4,9 +4,9 @@
             <h3>Room Management</h3>
         </div>
         <nav>
-            <router-link class="btn btn-primary" to="/rooms">Rooms</router-link>
-            <router-link class="btn btn-primary" to="/addRoom">Add Room</router-link>
-            <router-link class="btn btn-primary" to="/searchRoom">Search Room</router-link>
+            <router-link class="btn btn-primary" to="/rooms"><i class="fa fa-bed" aria-hidden="true"></i> Rooms</router-link>
+            <router-link class="btn btn-success" to="/addRoom"><i class="fa fa-plus-circle" aria-hidden="true"></i> Add Room</router-link>
+            <router-link class="btn btn-dark" to="/searchRoom"><i class="fa fa-search" aria-hidden="true"></i> Search Room</router-link>
         </nav>
         <br/>
         <router-view/>
@@ -25,7 +25,7 @@
         margin-bottom: 20px;
     }
 
-    .btn-primary{
+    .btn{
         margin-right: 5px;
     }
 

@@ -1,6 +1,5 @@
 <template>
     <form v-if="this.selectedRoom">
-<!--        <h4>Roo {{this.room.name}}m</h4>-->
         <h6 v-if="bills.length == 0">No bill found</h6>
         <div v-else>
             <table id="table">
@@ -59,9 +58,6 @@
         },
         props: ["room"],
         methods: {
-            handleChangeRoom(id) {
-                this.selectedRoom = id;
-            },
             getBillByRoomId(roomId){
                 http
                     .get("/bill/" + roomId)
