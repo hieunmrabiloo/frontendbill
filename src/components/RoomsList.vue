@@ -1,6 +1,6 @@
 <template>
     <div class="list row">
-        <div class="col-md-6">
+        <div class="col-md-4">
             <button class="btn btn-primary" type="button">
                 <i class="fa fa-list-ul" aria-hidden="true"></i> Room List <span class="badge badge-light">{{rooms.length}}</span>
             </button>
@@ -28,7 +28,7 @@
                 </li>
             </ul>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-7">
             <router-view @refreshData="refreshList"></router-view>
         </div>
     </div>
@@ -48,8 +48,13 @@
         methods: {
             /* eslint-disable no-console */
             retrieveRooms() {
+                const config = {
+                    headers: {
+                        "Authorization": "Bearer " + sessionStorage.token
+                    }
+                }
                 http
-                    .get("/rooms")
+                    .get("/rooms", config)
                     .then(response => {
                         this.rooms = response.data; // JSON are parsed automatically.
                         console.log(response.data);
@@ -73,7 +78,7 @@
 <style scoped>
     .list {
         text-align: left;
-        max-width: 600px;
+        max-width: 1000px;
         margin: auto;
     }
 

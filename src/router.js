@@ -5,6 +5,8 @@ import Room from "./components/Room";
 import AddRoom from "./components/AddRoom";
 import SearchRooms from "./components/SearchRooms";
 import BillsList from "./components/BillsList";
+import Login from "./components/Login";
+import Signup from "./components/Signup";
 
 Vue.use(Router);
 
@@ -39,6 +41,16 @@ export default new Router({
             path: "/searchRoom",
             name: "searchRoom",
             component: SearchRooms
+        },
+        {
+            path: "/login",
+            name: "login",
+            component: Login
+        },
+        {
+            path: "/register",
+            name: "register",
+            component: Signup
         }
     ]
 });
