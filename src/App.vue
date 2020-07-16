@@ -20,7 +20,18 @@
                     </li>
                 </ul>
             </div>
-            <div class="navbar-nav account-info">
+            <div v-if="username != null">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item">
+                        <span class="nav-link">{{username}}</span>
+                    </li>
+                    <li class="nav-item">
+                        <router-link class="nav-link account-info" to="/logout"><i aria-hidden="true" class="fa fa-sign-out"></i> Log Out
+                        </router-link>
+                    </li>
+                </ul>
+            </div>
+            <div v-else class="navbar-nav account-info">
                 <ul class="navbar-nav mr-auto">
                     <li class="nav-item">
                         <router-link class="nav-link" to="/login"><i aria-hidden="true" class="fa fa-user"></i> Login
@@ -31,18 +42,6 @@
                         </router-link>
                     </li>
                 </ul>
-                <!--                    <a class="nav-link dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true"-->
-                <!--                       aria-expanded="false">-->
-                <!--                        Tên-->
-                <!--                    </a>-->
-                <!--                    <div class="dropdown-menu bg-dark">-->
-                <!--                        <a class="dropdown-item" href="">-->
-                <!--                            <i class="fa fa-sign-out"></i>-->
-                <!--                            Log out</a>-->
-                <!--                        <a class="dropdown-item" style="color: red" href="">-->
-                <!--                            <i class="fa fa-trash-o"></i>-->
-                <!--                            Delete Account</a>-->
-                <!--                    </div>-->
             </div>
         </nav>
         <br/>
@@ -52,8 +51,25 @@
 
 <script>
     export default {
-        name: "app"
-    };
+        name: "app",
+        data: function () {
+            return {
+                username: '',
+            }
+        },
+        created() {
+            this.username = sessionStorage.getItem('username');
+        },
+        watch: {
+            $route(to, from) {
+                if (to.path === '/' && from.path === '/login') {
+                    this.username = sessionStorage.getItem('username');
+                }else if(to.path === '/' && from.path === '/logout'){
+                    this.username = null;
+                }
+            }
+        }
+    }
 </script>
 
 <style>

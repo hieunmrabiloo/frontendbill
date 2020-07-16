@@ -7,6 +7,7 @@ import SearchRooms from "./components/SearchRooms";
 import BillsList from "./components/BillsList";
 import Login from "./components/Login";
 import Signup from "./components/Signup";
+import Logout from "./components/Logout";
 
 Vue.use(Router);
 
@@ -51,6 +52,11 @@ export default new Router({
             path: "/register",
             name: "register",
             component: Signup
+        },
+        {
+            path: "/logout",
+            name: "logout",
+            component: Logout
         }
     ]
 });

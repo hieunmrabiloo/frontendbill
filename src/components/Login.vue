@@ -56,8 +56,9 @@
                     .post("/login", data)
                     .then(response => {
                             sessionStorage.token = response.data;
+                            sessionStorage.setItem('username', this.username);
                             console.log(response.data);
-                            this.$router.push('/home');
+                            this.$router.push('/');
                         }
                     )
                     .catch(e => {
