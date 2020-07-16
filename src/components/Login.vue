@@ -13,7 +13,7 @@
                 </div>
                 <div class="wrap-input100 rs1 validate-input">
                     <input class="input100" name="password" placeholder="Password" required type="password"
-                           v-model="password">
+                           v-model="password" v-on:keyup.enter="checkLogin">
                     <span class="focus-input100-1"></span>
                     <span class="focus-input100-2"></span>
                 </div>
@@ -26,9 +26,7 @@
 						<span class="txt1">
 							Create an account?
 						</span>
-                    <a class="txt2 hov1" href="/register">
-                        Sign up
-                    </a>
+                    <router-link class="txt2 hov1" to="/register">Sign Up</router-link>
                 </div>
             </div>
         </div>
@@ -37,6 +35,7 @@
 
 <script>
     import http from "../http-common";
+    import Swal from 'sweetalert2'
 
     export default {
         name: "login",
@@ -58,10 +57,22 @@
                             sessionStorage.token = response.data;
                             sessionStorage.setItem('username', this.username);
                             console.log(response.data);
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success!',
+                                text: 'Login Successfully!!!',
+                            })
                             this.$router.push('/');
                         }
                     )
                     .catch(e => {
+                        if (e.response.status == 400) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Oops...',
+                                text: 'Username or password incorrect!',
+                            })
+                        }
                         console.log(e);
                     });
             }

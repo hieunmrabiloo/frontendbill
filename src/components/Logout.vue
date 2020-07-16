@@ -9,11 +9,18 @@
     </div>
 </template>
 <script>
+    import Swal from "sweetalert2";
+
     export default {
         name: "Logout",
         created() {
             sessionStorage.removeItem('username');
             sessionStorage.token = '';
+            Swal.fire({
+                icon: 'success',
+                title: 'Success!',
+                text: 'Logged out!',
+            })
             this.$router.push("/")
         }
     }

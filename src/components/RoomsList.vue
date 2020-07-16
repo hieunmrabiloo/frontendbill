@@ -72,8 +72,10 @@
             this.username = sessionStorage.getItem('username');
         },
         mounted() {
-            this.retrieveRooms();
-            this.getRoomIdByUsername();
+            if(this.username != null){
+                this.retrieveRooms();
+                this.getRoomIdByUsername();
+            }
         },
         methods: {
             /* eslint-disable no-console */

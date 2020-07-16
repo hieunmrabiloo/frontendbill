@@ -30,9 +30,7 @@
 						<span class="txt1">
 							Having account?
 						</span>
-                        <a class="txt2 hov1" href="/login">
-                            Login
-                        </a>
+                       <router-link class="txt2 hov1" to="/login">Login</router-link>
                     </div>
             </div>
         </div>
@@ -41,6 +39,7 @@
 
 <script>
     import http from "../http-common";
+    import Swal from "sweetalert2";
 
     export default {
         name: "Signup",
@@ -69,6 +68,11 @@
                         this.username = response.data.username;
                         this.password = response.data.password;
                         this.room = response.data.room;
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success!',
+                            text: 'Your account has been created!',
+                        })
                         console.log(response.data);
                     })
                     .catch(e => {
@@ -77,7 +81,7 @@
             },
             retrieveRooms() {
                 http
-                    .get("/rooms")
+                    .get("/user/rooms")
                     .then(response => {
                         this.rooms = response.data; // JSON are parsed automatically.
                         console.log(response.data);

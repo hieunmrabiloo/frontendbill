@@ -35,6 +35,7 @@
 </template>
 <script>
     import http from "../http-common";
+    import Swal from "sweetalert2";
 
     export default {
         name: "BillsList",
@@ -78,7 +79,13 @@
                     .catch(e => {
                         console.log(e);
                     });
-                alert("Deleted selected bill successfully!")
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Deleted selected bill successfully!!',
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 500
+                })
             },
             activate: function (index) {
                 this.activate_index = index;

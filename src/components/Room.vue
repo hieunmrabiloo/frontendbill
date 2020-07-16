@@ -62,6 +62,7 @@
 
 <script>
     import http from "../http-common";
+    import Swal from "sweetalert2";
 
     export default {
         name: "Room",
@@ -125,6 +126,13 @@
                             this.elecPrice = response.data.elecPrice;
                             this.waterNum = response.data.waterNum;
                             this.waterPrice = response.data.waterPrice;
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success!',
+                                text: 'Update bill successfully!',
+                                showConfirmButton: false,
+                                timer: 500
+                            })
                             console.log(response.data);
                         })
                         .catch(e => {
@@ -135,6 +143,13 @@
                         .post("/bill", data)
                         .then(response => {
                             this.id = response.data.id;
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success!',
+                                text: 'Add bill successfully!',
+                                showConfirmButton: false,
+                                timer: 500
+                            })
                             console.log(response.data);
                         })
                         .catch(e => {
