@@ -1,8 +1,8 @@
 <template>
     <div class="list row">
-        <div class="col-md-4">
+        <div v-if="this.username" class="col-md-4">
             <button class="btn btn-primary" type="button">
-                <i class="fa fa-list-ul" aria-hidden="true"></i> Room List <span class="badge badge-light">{{rooms.length}}</span>
+                <i aria-hidden="true" class="fa fa-list-ul"></i> Room List <span class="badge badge-light">{{rooms.length}}</span>
             </button>
             <ul>
                 <li :key="index" v-for="(room, index) in rooms">
@@ -27,6 +27,26 @@
                     </div>
                 </li>
             </ul>
+            <button class="btn btn-primary" type="button" @click="getRoomByRoomId">
+                My Room
+            </button>
+            <ul>
+                <li>
+                    <span class="badge badge-pill badge-primary">{{this.roomName}}</span>
+                    <div v-if="this.roomName" class="custom-div">
+                        <router-link :to="{
+                        name: 'list-bill',
+                        params: {id: this.roomId}
+                        }"
+                        >
+                            List Bill
+                        </router-link>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div v-else class="alert alert-danger" role="alert">
+            Please login first
         </div>
         <div class="col-md-7">
             <router-view @refreshData="refreshList"></router-view>
@@ -42,8 +62,18 @@
         data() {
             return {
                 selectedRoom: "1",
-                rooms: []
+                rooms: [],
+                username: '',
+                roomId: 0,
+                roomName: '',
             };
+        },
+        created() {
+            this.username = sessionStorage.getItem('username');
+        },
+        mounted() {
+            this.retrieveRooms();
+            this.getRoomIdByUsername();
         },
         methods: {
             /* eslint-disable no-console */
@@ -63,14 +93,40 @@
                         console.log(e);
                     });
             },
+            getRoomIdByUsername() {
+                const config = {
+                    headers: {
+                        "Authorization": "Bearer " + sessionStorage.token
+                    }
+                }
+                http
+                    .get("/user/" + this.username, config)
+                    .then(response => {
+                        this.roomId = response.data;
+                    })
+                    .catch(e => {
+                        console.log(e);
+                    })
+            },
+            getRoomByRoomId() {
+                const config = {
+                    headers: {
+                        "Authorization": "Bearer " + sessionStorage.token
+                    }
+                }
+                http
+                    .get("/room/user/" + this.roomId, config)
+                    .then(response => {
+                        this.roomName = response.data;
+                    })
+                    .catch(e => {
+                        console.log(e);
+                    })
+            },
             refreshList() {
                 this.retrieveRooms();
             }
             /* eslint-enable no-console */
-        }
-        ,
-        mounted() {
-            this.retrieveRooms();
         }
     }
 </script>
@@ -96,5 +152,7 @@
 
     .btn-primary {
         margin-bottom: 13px;
+        margin-left: 30px;
     }
+
 </style>
