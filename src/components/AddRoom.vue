@@ -1,19 +1,19 @@
 <template>
-    <div>
-        <div v-if="this.username" class="submitform">
+    <div class="list row">
+        <div class="col-md-4" v-if="this.username">
             <div v-if="!submitted">
                 <h4>Name</h4>
                 <div class="form-group">
-                    <input type="text" class="form-control" id="name" required v-model="room.name" name="name">
+                    <input class="form-control" id="name" name="name" required type="text" v-model="room.name">
                 </div>
-                <button v-on:click="saveRoom" class="btn btn-success">Save</button>
+                <button class="btn btn-success" v-on:click="saveRoom">Save</button>
             </div>
             <div v-else>
                 <h4>Save successfully!</h4>
                 <button class="btn btn-success" v-on:click="newRoom">Add</button>
             </div>
         </div>
-        <div v-else class="alert alert-danger" role="alert">
+        <div class="alert alert-danger" role="alert" v-else>
             Please login first
         </div>
     </div>
@@ -71,13 +71,9 @@
 </script>
 
 <style scoped>
-    .submitform {
-        max-width: 400px;
+    .list {
+        text-align: left;
+        max-width: 1000px;
         margin: auto;
-    }
-    .alert{
-        max-width: 157.53px;
-        margin-left: 86.5px;
-        text-align: center;
     }
 </style>

@@ -1,5 +1,5 @@
 <template>
-    <form v-if="this.room">
+    <div v-if="this.room">
         <h4>Room {{this.room.name}}</h4>
         <div>
             <div v-if="errors.length">
@@ -55,9 +55,9 @@
                 </tr>
                 </tbody>
             </table>
-            <button class="btn btn-success" v-on:click="saveBill">Save</button>
+            <button class="btn btn-success" @click="saveBill">Save</button>
         </div>
-    </form>
+    </div>
 </template>
 
 <script>
@@ -100,7 +100,6 @@
                     this.errors.push('Current water number must be greater than Previous water number!')
                 }
             },
-            /* eslint-disable no-console */
             saveBill() {
                 var data = {
                     preElecNum: this.preElecNum,
@@ -121,40 +120,36 @@
                     http
                         .put("/bill/update/" + this.updateId, data)
                         .then(response => {
-                            this.roomRates = response.data.roomRates;
-                            this.elecNum = response.data.elecNum;
-                            this.elecPrice = response.data.elecPrice;
-                            this.waterNum = response.data.waterNum;
-                            this.waterPrice = response.data.waterPrice;
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Success!',
-                                text: 'Update bill successfully!',
-                                showConfirmButton: false,
-                                timer: 500
-                            })
-                            console.log(response.data);
+                            this.id = response.data.id;
                         })
                         .catch(e => {
                             console.log(e);
                         });
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success!',
+                        text: 'Update bill successfully!',
+                        showConfirmButton: false,
+                        timer: 500
+                    })
+                    this.$router.push({name: 'list-bill', params: {id : this.room.id}})
                 } else {
                     http
                         .post("/bill", data)
                         .then(response => {
                             this.id = response.data.id;
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Success!',
-                                text: 'Add bill successfully!',
-                                showConfirmButton: false,
-                                timer: 500
-                            })
-                            console.log(response.data);
                         })
                         .catch(e => {
                             console.log(e);
                         });
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success!',
+                        text: 'Add bill successfully!',
+                        showConfirmButton: false,
+                        timer: 500
+                    })
+                    this.$router.push({name: 'list-bill', params: {id : this.room.id}});
                 }
             },
             getMonthByMonthAndRoomId() {

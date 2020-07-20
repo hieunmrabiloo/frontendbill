@@ -1,6 +1,6 @@
 <template>
     <form v-if="this.selectedRoom">
-        <h6 v-if="bills.length == 0">No bill found</h6>
+        <h6 v-if="bills.length === 0">No bill found</h6>
         <div v-else>
             <table id="table">
                 <thead>
@@ -44,13 +44,26 @@
                 id: 0,
                 selectedRoom: "",
                 activate_index: null,
-                bills: []
+                bills: [],
+                prevRoute: null
             }
         },
         watch: {
             $route(val) {
                 this.selectedRoom = val.params.id;
-                this.getBillByRoomId(val.params.id);
+                this.getBillByRoomId(this.selectedRoom);
+            }
+        },
+        beforeRouteEnter(to, from, next) {
+            if (to.path === '/bill/' + from.params.id && from.path === '/room/' + from.params.id) {
+                next(vm => {
+                    vm.getBillByRoomId(from.params.id)
+                    vm.path = "/bill/" + from.params.id
+                })
+            } else {
+                next(vm => {
+                    vm.path = "/bill/" + from.params.id
+                })
             }
         },
         mounted() {
@@ -59,7 +72,7 @@
         },
         props: ["room"],
         methods: {
-            getBillByRoomId(roomId){
+            getBillByRoomId(roomId) {
                 http
                     .get("/bill/" + roomId)
                     .then(response => {
@@ -157,11 +170,13 @@
         background: #9cb4ff;
         font-weight: bold;
     }
+
     .btn-danger {
         float: right;
         margin-top: 5px;
     }
-    form{
+
+    form {
         float: left;
     }
 </style>

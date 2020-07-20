@@ -1,36 +1,38 @@
 <template>
-    <div class="search-form">
-        <h4>Find by Name</h4>
-        <div class="form-group">
-            <input type="text" class="form-control" id="name" required v-model="name" name="name">
-        </div>
+    <div class="list row">
+        <div class="col-md-4">
+            <h4>Find by Name</h4>
+            <div class="form-group">
+                <input class="form-control" id="name" name="name" required type="text" v-model="name">
+            </div>
 
-        <div class="btn-group">
-            <button v-on:click="searchRooms" class="btn btn-success">Search</button>
-        </div>
+            <div class="btn-group">
+                <button class="btn btn-success" v-on:click="searchRooms">Search</button>
+            </div>
 
-        <ul class="search-result">
-            <li :key="index" v-for="(room, index) in rooms">
-                <span class="badge badge-pill badge-primary">{{room.name}}</span>
-                <div class="custom-div">
-                    <router-link :to="{
+            <ul class="search-result">
+                <li :key="index" v-for="(room, index) in rooms">
+                    <span class="badge badge-pill badge-primary">{{room.name}}</span>
+                    <div class="custom-div">
+                        <router-link :to="{
                         name: 'room',
                         params: {room: room, id: room.id}
                     }">
-                        Add Bill
-                    </router-link>
-                </div>
-                ||
-                <div class="custom-div">
-                    <router-link :to="{
+                            Add Bill
+                        </router-link>
+                    </div>
+                    ||
+                    <div class="custom-div">
+                        <router-link :to="{
                         name: 'list-bill',
                         params: {room: room, id: room.id}
                     }">
-                        List Bill
-                    </router-link>
-                </div>
-            </li>
-        </ul>
+                            List Bill
+                        </router-link>
+                    </div>
+                </li>
+            </ul>
+        </div>
     </div>
 </template>
 
@@ -64,21 +66,26 @@
 </script>
 
 <style scoped>
-    .search-form {
-        max-width: 400px;
+    .list {
+        text-align: left;
+        max-width: 1000px;
         margin: auto;
     }
+
     .search-result {
         margin-top: 20px;
         text-align: left;
     }
-    li{
+
+    li {
         display: flex;
     }
-    .custom-div{
-        margin:0 3px 0px 3px;
+
+    .custom-div {
+        margin: 0 3px 0px 3px;
     }
-    .badge{
+
+    .badge {
         margin-top: 3px;
     }
 </style>

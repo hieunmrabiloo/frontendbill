@@ -457,19 +457,4 @@
     .login100-form-btn:hover {
         background-color: #333333;
     }
-
-
-    /*------------------------------------------------------------------
-    [ Alert validate ]*/
-
-    .validate-input {
-        position: relative;
-    }
-
-    @media (max-width: 992px) {
-        .alert-validate::before {
-            visibility: visible;
-            opacity: 1;
-        }
-    }
 </style>
