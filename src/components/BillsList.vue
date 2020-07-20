@@ -1,5 +1,5 @@
 <template>
-    <form v-if="this.selectedRoom">
+    <div class="col-md-11" v-if="this.selectedRoom">
         <h6 v-if="bills.length === 0">No bill found</h6>
         <div v-else>
             <table id="table">
@@ -16,7 +16,7 @@
                 </tr>
                 </thead>
                 <tbody id="tbody">
-                <tr :class="{active: activate_index === index}" :key="index" @click="activate(index),getId(bill.id)"
+                <tr :class="{active: activate_index === index}" :key="index" @click="activate(index), getId(bill.id)"
                     v-for="(bill,index) in bills">
                     <td>{{index+1}}</td>
                     <td>{{bill.monthBill}}</td>
@@ -29,9 +29,9 @@
                 </tr>
                 </tbody>
             </table>
-            <button class="btn btn-danger" v-on:click="deleteBill">Delete</button>
+            <button @click="deleteBill" class="btn btn-danger">Delete</button>
         </div>
-    </form>
+    </div>
 </template>
 <script>
     import http from "../http-common";
@@ -77,27 +77,46 @@
                     .get("/bill/" + roomId)
                     .then(response => {
                         this.bills = response.data;
-                        console.log(response.data);
                     })
                     .catch(e => {
                         console.log(e);
                     });
             },
             deleteBill() {
-                http
-                    .delete("/bill/delete/" + this.id)
-                    .then(() => {
-                        this.getBillByRoomId(this.selectedRoom);
-                    })
-                    .catch(e => {
-                        console.log(e);
-                    });
                 Swal.fire({
-                    icon: 'success',
-                    title: 'Deleted selected bill successfully!!',
-                    position: 'top-end',
-                    showConfirmButton: false,
-                    timer: 500
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.value) {
+                        http
+                            .delete("/bill/delete/" + this.id)
+                            .then(() => {
+                                this.getBillByRoomId(this.selectedRoom);
+                            })
+                            .catch(e => {
+                                console.log(e);
+                            });
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'success',
+                            title: 'Selected bill has been deleted!',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                    } else {
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'error',
+                            title: 'You have been cancel delete!',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                    }
                 })
             },
             activate: function (index) {
@@ -174,9 +193,7 @@
     .btn-danger {
         float: right;
         margin-top: 5px;
+        margin-right: 5px;
     }
 
-    form {
-        float: left;
-    }
 </style>

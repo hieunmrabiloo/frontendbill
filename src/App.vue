@@ -20,25 +20,27 @@
                     </li>
                 </ul>
             </div>
-            <div v-if="username != null" class="navbar-nav account-info">
+            <div class="navbar-nav account-info" v-if="username != null">
                 <ul class="navbar-nav mr-auto">
                     <li class="nav-item">
                         <span class="nav-link"><i aria-hidden="true" class="fa fa-user"></i> {{username}}</span>
                     </li>
                     <li class="nav-item">
-                        <router-link class="nav-link account-info" to="/logout"><i aria-hidden="true" class="fa fa-sign-out"></i> Log Out
+                        <router-link class="nav-link account-info" to="/logout"><i aria-hidden="true"
+                                                                                   class="fa fa-sign-out"></i> Log Out
                         </router-link>
                     </li>
                 </ul>
             </div>
-            <div v-else class="navbar-nav account-info">
+            <div class="navbar-nav account-info" v-else>
                 <ul class="navbar-nav mr-auto">
                     <li class="nav-item">
                         <router-link class="nav-link" to="/login"><i aria-hidden="true" class="fa fa-user"></i> Login
                         </router-link>
                     </li>
                     <li class="nav-item">
-                        <router-link class="nav-link account-info" to="/register"><i aria-hidden="true" class="fa fa-sign-in"></i> Sign Up
+                        <router-link class="nav-link account-info" to="/register"><i aria-hidden="true"
+                                                                                     class="fa fa-sign-in"></i> Sign Up
                         </router-link>
                     </li>
                 </ul>
@@ -64,7 +66,7 @@
             $route(to, from) {
                 if (to.path === '/' && from.path === '/login') {
                     this.username = sessionStorage.getItem('username');
-                }else if(to.path === '/' && from.path === '/logout'){
+                } else if (to.path === '/' && from.path === '/logout') {
                     this.username = null;
                 }
             }

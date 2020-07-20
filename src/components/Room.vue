@@ -22,7 +22,7 @@
                 </thead>
                 <tbody>
                 <tr>
-                    <td><input @change="comboGet" class="form-control" id="monthBill" type="text"
+                    <td><input @change="comboGet" @keyup="checkMonth" class="form-control" id="monthBill" type="text"
                                v-model="monthBill"></td>
                     <td><input class="form-control" id="rates" type="text" v-model="roomRates">
                     </td>
@@ -43,7 +43,8 @@
                         -
                         <input class="form-control" id="preWaterNum" readonly type="text" v-model="preWaterNum">
                         x
-                        <select class="form-control custom-select" id="waterPrice" name="waterPrice" v-model="waterPrice">
+                        <select class="form-control custom-select" id="waterPrice" name="waterPrice"
+                                v-model="waterPrice">
                             <option value="20">20k/num</option>
                             <option value="25">25k/num</option>
                             <option value="30">30k/num</option>
@@ -55,7 +56,7 @@
                 </tr>
                 </tbody>
             </table>
-            <button class="btn btn-success" @click="saveBill">Save</button>
+            <button @click="saveBill" class="btn btn-success">Save</button>
         </div>
     </div>
 </template>
@@ -75,7 +76,7 @@
                 check: false,
                 billBymonth: 0,
                 id: 0,
-                monthBill: 0,
+                monthBill: 1,
                 roomRates: 0,
                 elecNum: 0,
                 elecPrice: 0,
@@ -98,6 +99,14 @@
                 }
                 if (this.waterNum <= this.preWaterNum) {
                     this.errors.push('Current water number must be greater than Previous water number!')
+                }
+            },
+            checkMonth() {
+                this.errors = [];
+                if (this.monthBill == '' || this.monthBill == 0) {
+                    this.errors.push('You must input month!')
+                } else if (this.monthBill > 12) {
+                    this.errors.push('Month cant greater than 12')
                 }
             },
             saveBill() {
@@ -130,9 +139,9 @@
                         title: 'Success!',
                         text: 'Update bill successfully!',
                         showConfirmButton: false,
-                        timer: 500
-                    })
-                    this.$router.push({name: 'list-bill', params: {id : this.room.id}})
+                        timer: 1500
+                    });
+                    this.$router.push({name: 'list-bill', params: {id: this.room.id}})
                 } else {
                     http
                         .post("/bill", data)
@@ -147,9 +156,9 @@
                         title: 'Success!',
                         text: 'Add bill successfully!',
                         showConfirmButton: false,
-                        timer: 500
-                    })
-                    this.$router.push({name: 'list-bill', params: {id : this.room.id}});
+                        timer: 1500
+                    });
+                    this.$router.push({name: 'list-bill', params: {id: this.room.id}});
                 }
             },
             getMonthByMonthAndRoomId() {
@@ -157,7 +166,6 @@
                     .get("/bill/month/" + this.monthBill + "/" + this.room.id)
                     .then(response => {
                         this.billBymonth = response.data;
-                        console.log(response.data);
                     })
                     .catch(e => {
                         console.log(e);
@@ -168,7 +176,6 @@
                     .get("/bill/check/" + this.monthBill + "/" + this.room.id)
                     .then(response => {
                         this.check = response.data;
-                        console.log(response.data);
                     })
                     .catch(e => {
                         console.log(e);
@@ -179,7 +186,6 @@
                     .get("/bill/id/" + this.monthBill + "/" + this.room.id)
                     .then(response => {
                         this.updateId = response.data;
-                        console.log(response.data);
                     })
                     .catch(e => {
                         console.log(e);
@@ -190,7 +196,6 @@
                     .get("/bill/elec/" + (this.monthBill - 1) + "/" + this.room.id)
                     .then(response => {
                         this.preElecNum = response.data;
-                        console.log(response.data);
                     })
                     .catch(e => {
                         console.log(e);
@@ -201,18 +206,19 @@
                     .get("/bill/water/" + (this.monthBill - 1) + "/" + this.room.id)
                     .then(response => {
                         this.preWaterNum = response.data;
-                        console.log(response.data);
                     })
                     .catch(e => {
                         console.log(e);
                     });
             },
             comboGet() {
-                this.getCheckByMonthAndRoomId();
-                this.getIdByMonthAndRoomId();
-                this.getMonthByMonthAndRoomId();
-                this.getPreElecByMonthAndRoomId();
-                this.getPreWaterByMonthAndRoomId();
+                if (this.monthBill != '' && this.monthBill != 0) {
+                    this.getCheckByMonthAndRoomId();
+                    this.getIdByMonthAndRoomId();
+                    this.getMonthByMonthAndRoomId();
+                    this.getPreElecByMonthAndRoomId();
+                    this.getPreWaterByMonthAndRoomId();
+                }
             },
         }
     }
@@ -264,16 +270,13 @@
         width: 110px;
     }
 
-    form {
-        float: left;
-    }
-
     .alert-primary {
         text-align: center;
         width: 500px;
         margin-left: 95px;
     }
-    .alert-danger{
+
+    .alert-danger {
         margin-right: 2px;
     }
 
@@ -281,4 +284,5 @@
         float: right;
         margin-top: 5px;
     }
+
 </style>

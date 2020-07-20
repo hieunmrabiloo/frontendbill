@@ -1,6 +1,6 @@
 <template>
     <div class="list row">
-        <div v-if="this.username" class="col-md-4">
+        <div class="col-md-4" v-if="this.username">
             <button class="btn btn-primary" type="button">
                 <i aria-hidden="true" class="fa fa-list-ul"></i> Room List <span class="badge badge-light">{{rooms.length}}</span>
             </button>
@@ -27,13 +27,13 @@
                     </div>
                 </li>
             </ul>
-            <button class="btn btn-primary" type="button" @click="getRoomByRoomId">
+            <button @click="getRoomByRoomId" class="btn btn-primary" type="button">
                 My Room
             </button>
             <ul>
                 <li>
                     <span class="badge badge-pill badge-primary">{{this.roomName}}</span>
-                    <div v-if="this.roomName" class="custom-div">
+                    <div class="custom-div" v-if="this.roomName">
                         <router-link :to="{
                         name: 'list-bill',
                         params: {id: this.roomId}
@@ -45,7 +45,7 @@
                 </li>
             </ul>
         </div>
-        <div v-else class="alert alert-danger" role="alert">
+        <div class="alert alert-danger" role="alert" v-else>
             Please login first
         </div>
         <div class="col-md-7">
@@ -72,7 +72,7 @@
             this.username = sessionStorage.getItem('username');
         },
         mounted() {
-            if(this.username != null){
+            if (this.username != null) {
                 this.retrieveRooms();
                 this.getRoomIdByUsername();
             }
@@ -157,4 +157,7 @@
         margin-left: 30px;
     }
 
+    .col-md-7 {
+        max-width: 650px;
+    }
 </style>

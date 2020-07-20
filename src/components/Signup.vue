@@ -5,33 +5,35 @@
 					<span class="login100-form-title p-b-33">
 						Account SignUp
 					</span>
-                    <div class="wrap-input100">
-                        <input class="input100" name="username" placeholder="Username" required type="text" v-model="username">
-                        <span class="focus-input100-1"></span>
-                        <span class="focus-input100-2"></span>
-                    </div>
-                    <div class="wrap-input100 rs1">
-                        <input class="input100" name="password" placeholder="Password" required type="password" v-model="password">
-                        <span class="focus-input100-1"></span>
-                        <span class="focus-input100-2"></span>
-                    </div>
-                    <div>
-                        <select class="form-control" v-model="roomName" @change="getRoomByName(roomName)" required>
-                            <option :value="null" selected disabled>Choose your room</option>
-                            <option :key="index" v-for="(room,index) in rooms">{{room.name}}</option>
-                        </select>
-                    </div>
-                    <div class="container-login100-form-btn m-t-20">
-                        <button class="login100-form-btn" id="submit" name="submit" @click="checkSignup">
-                            Sign up
-                        </button>
-                    </div>
-                    <div class="text-center">
+                <div class="wrap-input100">
+                    <input class="input100" name="username" placeholder="Username" required type="text"
+                           v-model="username">
+                    <span class="focus-input100-1"></span>
+                    <span class="focus-input100-2"></span>
+                </div>
+                <div class="wrap-input100 rs1">
+                    <input class="input100" name="password" placeholder="Password" required type="password"
+                           v-model="password">
+                    <span class="focus-input100-1"></span>
+                    <span class="focus-input100-2"></span>
+                </div>
+                <div>
+                    <select @change="getRoomByName(roomName)" class="form-control" required v-model="roomName">
+                        <option :value="null" disabled selected>Choose your room</option>
+                        <option :key="index" v-for="(room,index) in rooms">{{room.name}}</option>
+                    </select>
+                </div>
+                <div class="container-login100-form-btn m-t-20">
+                    <button @click="checkSignup" class="login100-form-btn" id="submit" name="submit">
+                        Sign up
+                    </button>
+                </div>
+                <div class="text-center">
 						<span class="txt1">
 							Having account?
 						</span>
-                       <router-link class="txt2 hov1" to="/login">Login</router-link>
-                    </div>
+                    <router-link class="txt2 hov1" to="/login">Login</router-link>
+                </div>
             </div>
         </div>
     </div>
@@ -90,7 +92,7 @@
                         console.log(e);
                     });
             },
-            getRoomByName:function(name) {
+            getRoomByName: function (name) {
                 http
                     .get("/room/" + name)
                     .then(response => {
