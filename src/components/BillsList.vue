@@ -2,33 +2,36 @@
     <div class="col-md-11" v-if="this.selectedRoom">
         <h6 v-if="bills.length === 0">No bill found</h6>
         <div v-else>
-            <table id="table">
-                <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Month</th>
-                    <th>Room Rates</th>
-                    <th>Electricity Number</th>
-                    <th>Electricity Price</th>
-                    <th>Water Number</th>
-                    <th>Water Price</th>
-                    <th>Total</th>
-                </tr>
-                </thead>
-                <tbody id="tbody">
-                <tr :class="{active: activate_index === index}" :key="index" @click="activate(index), getId(bill.id)"
-                    v-for="(bill,index) in bills">
-                    <td>{{index+1}}</td>
-                    <td>{{bill.monthBill}}</td>
-                    <td>{{bill.roomRates}}</td>
-                    <td>{{bill.elecNum}}</td>
-                    <td>{{bill.elecPrice}}</td>
-                    <td>{{bill.waterNum}}</td>
-                    <td>{{bill.waterPrice}}</td>
-                    <td class="highlight">{{bill.totalPrice}}</td>
-                </tr>
-                </tbody>
+            <table id="table" class="display">
+
             </table>
+<!--            <table id="table">-->
+<!--                <thead>-->
+<!--                <tr>-->
+<!--                    <th>#</th>-->
+<!--                    <th>Month</th>-->
+<!--                    <th>Room Rates</th>-->
+<!--                    <th>Electricity Number</th>-->
+<!--                    <th>Electricity Price</th>-->
+<!--                    <th>Water Number</th>-->
+<!--                    <th>Water Price</th>-->
+<!--                    <th>Total</th>-->
+<!--                </tr>-->
+<!--                </thead>-->
+<!--                <tbody id="tbody">-->
+<!--                <tr :class="{active: activate_index === index}" :key="index" @click="activate(index), getId(bill.id)"-->
+<!--                    v-for="(bill,index) in bills">-->
+<!--                    <td>{{index+1}}</td>-->
+<!--                    <td>{{bill.monthBill}}</td>-->
+<!--                    <td>{{bill.roomRates}}</td>-->
+<!--                    <td>{{bill.elecNum}}</td>-->
+<!--                    <td>{{bill.elecPrice}}</td>-->
+<!--                    <td>{{bill.waterNum}}</td>-->
+<!--                    <td>{{bill.waterPrice}}</td>-->
+<!--                    <td class="highlight">{{bill.totalPrice}}</td>-->
+<!--                </tr>-->
+<!--                </tbody>-->
+<!--            </table>-->
             <button @click="deleteBill" class="btn btn-danger">Delete</button>
         </div>
     </div>
