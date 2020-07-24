@@ -1,36 +1,4 @@
 <template>
-    <!--    <div class="limiter">-->
-    <!--        <div class="container-login100">-->
-    <!--            <div class="wrap-login100 p-l-55 p-r-55 p-t-65 p-b-50">-->
-    <!--					<span class="login100-form-title p-b-33">-->
-    <!--						Account Login-->
-    <!--					</span>-->
-    <!--                <div class="wrap-input100 validate-input">-->
-    <!--                    <input class="input100" name="username" placeholder="Username" required type="text"-->
-    <!--                           v-model="username">-->
-    <!--                    <span class="focus-input100-1"></span>-->
-    <!--                    <span class="focus-input100-2"></span>-->
-    <!--                </div>-->
-    <!--                <div class="wrap-input100 rs1 validate-input">-->
-    <!--                    <input class="input100" name="password" placeholder="Password" required type="password"-->
-    <!--                           v-model="password" v-on:keyup.enter="checkLogin">-->
-    <!--                    <span class="focus-input100-1"></span>-->
-    <!--                    <span class="focus-input100-2"></span>-->
-    <!--                </div>-->
-    <!--                <div class="container-login100-form-btn m-t-20">-->
-    <!--                    <button @click="checkLogin" class="login100-form-btn">-->
-    <!--                        Sign in-->
-    <!--                    </button>-->
-    <!--                </div>-->
-    <!--                <div class="text-center">-->
-    <!--						<span class="txt1">-->
-    <!--							Create an account?-->
-    <!--						</span>-->
-    <!--                    <router-link class="txt2 hov1" to="/register">Sign Up</router-link>-->
-    <!--                </div>-->
-    <!--            </div>-->
-    <!--        </div>-->
-    <!--    </div>-->
     <v-app>
         <v-card class="mx-auto mt-5" width="400">
             <v-card-title>
@@ -41,7 +9,8 @@
                     <v-text-field label="Username" prepend-icon="mdi-account-circle" v-model="username"/>
                     <v-text-field :type="showPassword ? 'text' : 'password'" @click:append="showPassword=!showPassword"
                                   append-icon="mdi-eye-off"
-                                  label="Password" prepend-icon="mdi-lock" v-model="password" v-on:keyup.enter="checkLogin"/>
+                                  label="Password" prepend-icon="mdi-lock" v-model="password"
+                                  v-on:keyup.enter="checkLogin"/>
                 </v-form>
             </v-card-text>
             <v-card-actions>

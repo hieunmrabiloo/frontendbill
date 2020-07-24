@@ -1,20 +1,34 @@
 <template>
-    <div class="list row">
-        <div class="col-md-4" v-if="this.username">
-            <div v-if="!submitted">
-                <h4>Name</h4>
-                <div class="form-group">
-                    <input class="form-control" id="name" name="name" required type="text" v-model="room.name">
-                </div>
-                <button class="btn btn-success" v-on:click="saveRoom">Save</button>
-            </div>
-            <div v-else>
-                <h4>Save successfully!</h4>
-                <button class="btn btn-success" v-on:click="newRoom">Add</button>
-            </div>
-        </div>
-        <div class="alert alert-danger" role="alert" v-else>
-            Please login first
+    <div id="app">
+        <v-overlay :value="true" v-if="!this.username">
+            <v-alert prominent type="error">
+                <v-row align="center">
+                    <v-col class="grow">You must login to take actions
+                        <router-link class="text-decoration-none" to="/login">
+                            <v-btn>Login</v-btn>
+                        </router-link>
+                    </v-col>
+                </v-row>
+            </v-alert>
+        </v-overlay>
+        <div v-else>
+            <v-card class="mx-auto ma-2" max-width="300" v-if="!submitted">
+                <v-card-title>
+                    <h3>Add Room</h3>
+                </v-card-title>
+                <v-card-text>
+                    <v-form>
+                        <v-text-field label="Room Name" v-model="room.name"></v-text-field>
+                    </v-form>
+                </v-card-text>
+                <v-card-actions>
+                    <v-btn @click="saveRoom" color="success">Add</v-btn>
+                </v-card-actions>
+            </v-card>
+            <v-card class="mx-auto ma-2" max-width="300" v-else>
+                <v-alert m type="success">Submit Successfully</v-alert>
+                <v-btn @click="newRoom" class="float-lg-right" color="info">Add more</v-btn>
+            </v-card>
         </div>
     </div>
 </template>

@@ -1,39 +1,24 @@
 <template>
-    <div class="col-md-11" v-if="this.selectedRoom">
-        <h6 v-if="bills.length === 0">No bill found</h6>
-        <div v-else>
-            <table id="table" class="display">
-
-            </table>
-<!--            <table id="table">-->
-<!--                <thead>-->
-<!--                <tr>-->
-<!--                    <th>#</th>-->
-<!--                    <th>Month</th>-->
-<!--                    <th>Room Rates</th>-->
-<!--                    <th>Electricity Number</th>-->
-<!--                    <th>Electricity Price</th>-->
-<!--                    <th>Water Number</th>-->
-<!--                    <th>Water Price</th>-->
-<!--                    <th>Total</th>-->
-<!--                </tr>-->
-<!--                </thead>-->
-<!--                <tbody id="tbody">-->
-<!--                <tr :class="{active: activate_index === index}" :key="index" @click="activate(index), getId(bill.id)"-->
-<!--                    v-for="(bill,index) in bills">-->
-<!--                    <td>{{index+1}}</td>-->
-<!--                    <td>{{bill.monthBill}}</td>-->
-<!--                    <td>{{bill.roomRates}}</td>-->
-<!--                    <td>{{bill.elecNum}}</td>-->
-<!--                    <td>{{bill.elecPrice}}</td>-->
-<!--                    <td>{{bill.waterNum}}</td>-->
-<!--                    <td>{{bill.waterPrice}}</td>-->
-<!--                    <td class="highlight">{{bill.totalPrice}}</td>-->
-<!--                </tr>-->
-<!--                </tbody>-->
-<!--            </table>-->
-            <button @click="deleteBill" class="btn btn-danger">Delete</button>
-        </div>
+    <div id="app">
+        <v-card>
+            <v-data-table :headers="headers" :items="bills" :single-select="singleSelect"
+                          class="elevation-1" item-key="id" show-select v-model="selected">
+                <template v-slot:no-data>
+                    <v-alert :value="true" color="#F44336" icon="warning">
+                        Sorry, nothing to display here :(
+                    </v-alert>
+                </template>
+                <template v-slot:top>
+                    <v-switch label="Single select" v-model="singleSelect"></v-switch>
+                </template>
+                <template v-slot:item.totalPrice="{ item }">
+                    <v-chip :color="getColor(item.totalPrice)" dark>
+                        {{ item.totalPrice }}
+                    </v-chip>
+                </template>
+            </v-data-table>
+            <v-btn @click="deleteBill" class="float-lg-right" color="#F44336">Delete</v-btn>
+        </v-card>
     </div>
 </template>
 <script>
@@ -44,10 +29,36 @@
         name: "BillsList",
         data: function () {
             return {
-                id: 0,
+                pagination: {
+                    sortBy: 'monthBill'
+                },
+                singleSelect: false,
+                check: false,
+                selected: [],
+                headers: [
+                    {text: 'Month', value: 'monthBill', align: 'left', sortable: 'false'},
+                    {text: 'Room Rates', value: 'roomRates'},
+                    {text: 'Electricity Number', value: 'elecNum'},
+                    {text: 'Electricity Price', value: 'elecPrice'},
+                    {text: 'Water Number', value: 'waterNum'},
+                    {text: 'Water Price', value: 'waterPrice'},
+                    {text: 'Total', value: 'totalPrice'},
+                ],
+                id: [],
                 selectedRoom: "",
                 activate_index: null,
-                bills: [],
+                bills: [
+                    {
+                        id: 0,
+                        monthBill: 0,
+                        roomRates: 0,
+                        elecNum: 0,
+                        elecPrice: 0,
+                        waterNum: 0,
+                        waterPrice: 0,
+                        totalPrice: 0
+                    }
+                ],
                 prevRoute: null
             }
         },
@@ -65,6 +76,7 @@
                 })
             } else {
                 next(vm => {
+                    vm.getBillByRoomId(from.params.id)
                     vm.path = "/bill/" + from.params.id
                 })
             }
@@ -96,21 +108,24 @@
                     confirmButtonText: 'Yes, delete it!'
                 }).then((result) => {
                     if (result.value) {
-                        http
-                            .delete("/bill/delete/" + this.id)
-                            .then(() => {
-                                this.getBillByRoomId(this.selectedRoom);
-                            })
-                            .catch(e => {
-                                console.log(e);
-                            });
-                        Swal.fire({
-                            position: 'top-end',
-                            icon: 'success',
-                            title: 'Selected bill has been deleted!',
-                            showConfirmButton: false,
-                            timer: 1500
-                        })
+                        for (let i = 0; i < this.selected.length; i++) {
+                            http
+                                .delete("/bill/delete/" + this.selected[i].id)
+                                .then(response => {
+                                    this.getBillByRoomId(this.selectedRoom);
+                                    console.log(response.data);
+                                    Swal.fire({
+                                        position: 'top-end',
+                                        icon: 'success',
+                                        title: 'Selected bill has been deleted!',
+                                        showConfirmButton: false,
+                                        timer: 1500
+                                    })
+                                })
+                                .catch(e => {
+                                    console.log(e);
+                                });
+                        }
                     } else {
                         Swal.fire({
                             position: 'top-end',
@@ -122,81 +137,16 @@
                     }
                 })
             },
-            activate: function (index) {
-                this.activate_index = index;
+            getColor(total) {
+                if (total > 7000) return 'red'
+                else if (total > 4000) return 'orange'
+                else return 'green'
             },
-            getId: function (id) {
-                this.id = id;
-            }
         },
 
     };
 </script>
 
 <style scoped>
-    #table {
-        width: 300px;
-    }
-
-    table {
-        border: 2px solid #ddd;
-        border-collapse: separate;
-        border-left: 0;
-        border-radius: 4px;
-        border-spacing: 0px;
-    }
-
-    thead {
-        /*display: table-header-group;*/
-        vertical-align: middle;
-        border-color: inherit;
-        border-collapse: separate;
-        background: #1c8fff;
-    }
-
-    tr {
-        /*display: table-row;*/
-        vertical-align: inherit;
-        border-color: inherit;
-    }
-
-    th, td {
-        padding: 5px 4px 6px 4px;
-        text-align: left;
-        vertical-align: top;
-        border-left: 1px solid #ddd;
-    }
-
-    td {
-        border-top: 2px solid #ddd;
-    }
-
-    thead:first-child tr:first-child th:first-child, tbody:first-child tr:first-child td:first-child {
-        border-radius: 4px 0 0 0;
-    }
-
-    thead:last-child tr:last-child th:first-child, tbody:last-child tr:last-child td:first-child {
-        border-radius: 0 0 0 4px;
-    }
-
-    .highlight {
-        color: red;
-        font-weight: bold;
-    }
-
-    ul > li:hover {
-        cursor: pointer;
-    }
-
-    .active {
-        background: #9cb4ff;
-        font-weight: bold;
-    }
-
-    .btn-danger {
-        float: right;
-        margin-top: 5px;
-        margin-right: 5px;
-    }
 
 </style>

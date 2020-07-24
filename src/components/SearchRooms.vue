@@ -1,38 +1,49 @@
 <template>
-    <div class="list row">
-        <div class="col-md-4">
-            <h4>Find by Name</h4>
-            <div class="form-group">
-                <input class="form-control" id="name" name="name" required type="text" v-model="name">
+    <div id="app">
+        <v-card class="mx-auto ma-2" max-width="300">
+            <v-card-title>
+                <h3>Find By Name</h3>
+            </v-card-title>
+            <v-card-text>
+                <v-form>
+                    <v-text-field label="Room Name" v-model="name"></v-text-field>
+                </v-form>
+            </v-card-text>
+            <v-card-actions>
+                <v-btn @click="searchRooms" color="success">Search</v-btn>
+            </v-card-actions>
+        </v-card>
+        <v-col class="mx-auto" v-if="this.submitted">
+            <div class="text-center">
+                <v-menu bottom offset-y open-on-hover origin="center center" rounded="b-xl"
+                        transition="scale-transition">
+                    <template v-slot:activator="{ on, attrs }">
+                        <v-btn color="primary" dark v-bind="attrs" v-on="on">
+                            <v-icon>mdi-format-list-bulleted-type</v-icon>
+                            Rooms
+                        </v-btn>
+                    </template>
+                    <v-list width="240">
+                        <v-list-item :key="index" v-for="(room, index) in rooms">
+                            <v-list-item-content>
+                                <router-link :to="{name: 'room',params: {room: room, id: room.id}}"
+                                             class="v-card--hover text-decoration-none">
+                                    <v-icon>mdi-plus-box</v-icon>
+                                    <v-list-item-title v-text="'Room:'+room.name"></v-list-item-title>
+                                </router-link>
+                            </v-list-item-content>
+                            <v-list-item-content>
+                                <router-link :to="{name: 'list-bill',params: {room: room, id: room.id}}"
+                                             class="v-card--hover text-decoration-none">
+                                    <v-icon>mdi-clipboard-list</v-icon>
+                                    <v-list-item-title v-text="'Bills: '+room.name"></v-list-item-title>
+                                </router-link>
+                            </v-list-item-content>
+                        </v-list-item>
+                    </v-list>
+                </v-menu>
             </div>
-
-            <div class="btn-group">
-                <button class="btn btn-success" v-on:click="searchRooms">Search</button>
-            </div>
-
-            <ul class="search-result">
-                <li :key="index" v-for="(room, index) in rooms">
-                    <span class="badge badge-pill badge-primary">{{room.name}}</span>
-                    <div class="custom-div">
-                        <router-link :to="{
-                        name: 'room',
-                        params: {room: room, id: room.id}
-                    }">
-                            Add Bill
-                        </router-link>
-                    </div>
-                    ||
-                    <div class="custom-div">
-                        <router-link :to="{
-                        name: 'list-bill',
-                        params: {room: room, id: room.id}
-                    }">
-                            List Bill
-                        </router-link>
-                    </div>
-                </li>
-            </ul>
-        </div>
+        </v-col>
     </div>
 </template>
 
@@ -43,6 +54,7 @@
         name: "SearchRooms",
         data() {
             return {
+                submitted: false,
                 name: '',
                 rooms: []
             };
@@ -59,6 +71,7 @@
                     .catch(e => {
                         console.log(e);
                     });
+                this.submitted = true;
             }
             /* eslint-enable no-console */
         }
@@ -66,26 +79,5 @@
 </script>
 
 <style scoped>
-    .list {
-        text-align: left;
-        max-width: 1000px;
-        margin: auto;
-    }
 
-    .search-result {
-        margin-top: 20px;
-        text-align: left;
-    }
-
-    li {
-        display: flex;
-    }
-
-    .custom-div {
-        margin: 0 3px 0px 3px;
-    }
-
-    .badge {
-        margin-top: 3px;
-    }
 </style>

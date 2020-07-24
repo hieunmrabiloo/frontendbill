@@ -1,63 +1,72 @@
 <template>
-    <div v-if="this.room">
-        <h4>Room {{this.room.name}}</h4>
-        <div>
-            <div v-if="errors.length">
-                <div :key="error" class="alert alert-danger" role="alert" v-for="error in errors">
-                    {{ error }}
-                </div>
-            </div>
-            <div class="alert alert-primary" role="alert">
-                Previous Electric Number: {{preElecNum}} | Previous Water Number: {{preWaterNum}}
-            </div>
-            <table id="table">
-                <thead>
-                <tr>
-                    <th>Month</th>
-                    <th>Room Rates</th>
-                    <th>Electricity</th>
-                    <th>Water</th>
-                    <th>Total</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <td><input @change="comboGet" @keyup="checkMonth" class="form-control" id="monthBill" type="text"
-                               v-model="monthBill"></td>
-                    <td><input class="form-control" id="rates" type="text" v-model="roomRates">
-                    </td>
-                    <td><input @change="checkForm" class="form-control" id="elecNum" type="text"
-                               v-model="elecNum">
-                        -
-                        <input class="form-control" id="preElecNum" readonly type="text" v-model="preElecNum">
-                        x
-                        <select class="form-control custom-select" id="elecPrice" name="elecPrice" v-model="elecPrice">
-                            <option value="2">2k/num</option>
-                            <option value="3">3k/num</option>
-                            <option value="4">4k/num</option>
-                            <option value="5">5k/num</option>
-                            <option value="6">6k/num</option>
-                        </select>
-                    </td>
-                    <td><input @change="checkForm" class="form-control" id="waterNum" type="text" v-model="waterNum">
-                        -
-                        <input class="form-control" id="preWaterNum" readonly type="text" v-model="preWaterNum">
-                        x
-                        <select class="form-control custom-select" id="waterPrice" name="waterPrice"
-                                v-model="waterPrice">
-                            <option value="20">20k/num</option>
-                            <option value="25">25k/num</option>
-                            <option value="30">30k/num</option>
-                            <option value="35">35k/num</option>
-                            <option value="40">40k/num</option>
-                        </select>
-                    </td>
-                    <td><input class="form-control" readonly type="text" v-model="totalPrice"></td>
-                </tr>
-                </tbody>
-            </table>
-            <button @click="saveBill" class="btn btn-success">Save</button>
-        </div>
+    <div id="app">
+        <v-card>
+            <v-card-title>
+                <h1 class="display-1">Room {{this.selectedRoom.name}}</h1>
+            </v-card-title>
+            <v-card-text>
+                <v-alert type="info">
+                    Previous Electric Number: {{preElecNum}} | Previous Water Number: {{preWaterNum}}
+                </v-alert>
+                <v-alert :key="error" type="error" v-for="error in errors">
+                    <div v-if="errors.length">{{error}}</div>
+                </v-alert>
+                <v-form>
+                    <table id="table">
+                        <thead>
+                        <tr>
+                            <th>Month</th>
+                            <th>Room Rates</th>
+                            <th>Electricity</th>
+                            <th>Water</th>
+                            <th>Total</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td><input @change="comboGet" @keyup="checkMonth" class="form-control" id="monthBill"
+                                       type="text"
+                                       v-model="monthBill"></td>
+                            <td><input class="form-control" id="rates" type="text" v-model="roomRates">
+                            </td>
+                            <td><input @change="checkForm" class="form-control" id="elecNum" type="text"
+                                       v-model="elecNum">
+                                -
+                                <input class="form-control" id="preElecNum" readonly type="text"
+                                       v-model="preElecNum">
+                                x
+                                <select class="form-control custom-select" id="elecPrice" name="elecPrice"
+                                        v-model="elecPrice">
+                                    <option value="2">2k/num</option>
+                                    <option value="3">3k/num</option>
+                                    <option value="4">4k/num</option>
+                                    <option value="5">5k/num</option>
+                                    <option value="6">6k/num</option>
+                                </select>
+                            </td>
+                            <td><input @change="checkForm" class="form-control" id="waterNum" type="text"
+                                       v-model="waterNum">
+                                -
+                                <input class="form-control" id="preWaterNum" readonly type="text"
+                                       v-model="preWaterNum">
+                                x
+                                <select class="form-control custom-select" id="waterPrice" name="waterPrice"
+                                        v-model="waterPrice">
+                                    <option value="20">20k/num</option>
+                                    <option value="25">25k/num</option>
+                                    <option value="30">30k/num</option>
+                                    <option value="35">35k/num</option>
+                                    <option value="40">40k/num</option>
+                                </select>
+                            </td>
+                            <td><input class="form-control" readonly type="text" v-model="totalPrice"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </v-form>
+            </v-card-text>
+            <v-btn @click="saveBill" class="float-lg-right" color="success">Save</v-btn>
+        </v-card>
     </div>
 </template>
 
@@ -69,6 +78,8 @@
         name: "Room",
         data: function () {
             return {
+                selectedRoom: [],
+                roomId: '',
                 errors: [],
                 preElecNum: 0,
                 preWaterNum: 0,
@@ -90,8 +101,29 @@
                     + Number((this.waterNum - this.preWaterNum) * this.waterPrice);
             }
         },
+        watch: {
+            $route(val) {
+                this.roomId = val.params.id;
+                this.getRoom(this.roomId);
+            }
+        },
+        mounted() {
+            this.roomId = this.$route.params.id;
+            this.getRoom(this.roomId);
+        },
         props: ["room"],
         methods: {
+            getRoom(id) {
+                http
+                    .get("/room/get/" + id)
+                    .then(response => {
+                        this.selectedRoom = response.data; // JSON are parsed automatically.
+                        console.log(response.data);
+                    })
+                    .catch(e => {
+                        console.log(e);
+                    });
+            },
             checkForm() {
                 this.errors = [];
                 if (this.elecNum <= this.preElecNum) {
@@ -268,21 +300,6 @@
 
     .form-control {
         width: 110px;
-    }
-
-    .alert-primary {
-        text-align: center;
-        width: 500px;
-        margin-left: 95px;
-    }
-
-    .alert-danger {
-        margin-right: 2px;
-    }
-
-    .btn-success {
-        float: right;
-        margin-top: 5px;
     }
 
 </style>
