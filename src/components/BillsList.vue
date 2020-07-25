@@ -1,8 +1,14 @@
 <template>
     <div id="app">
         <v-card>
-            <v-data-table :headers="headers" :items="bills" :single-select="singleSelect"
-                          class="elevation-1" item-key="id" show-select v-model="selected">
+            <v-card-title>
+                Room {{this.selectedRoom.name}}
+                <v-spacer></v-spacer>
+                <v-text-field append-icon="mdi-magnify" hide-details label="Search" single-line v-model="search"/>
+            </v-card-title>
+            <v-data-table :headers="headers" :items="bills" :items-per-page="itemsPerPage" :page.sync="page"
+                          :search="search" :single-select="singleSelect" @page-count="pageCount = $event"
+                          class="elevation-1" hide-default-footer item-key="id" show-select v-model="selected">
                 <template v-slot:no-data>
                     <v-alert :value="true" color="#F44336" icon="warning">
                         Sorry, nothing to display here :(
@@ -17,7 +23,17 @@
                     </v-chip>
                 </template>
             </v-data-table>
-            <v-btn @click="deleteBill" class="float-lg-right" color="#F44336">Delete</v-btn>
+            <v-card-actions>
+                <v-pagination :length="pageCount" circle class="mx-16" v-model="page"></v-pagination>
+                <v-spacer></v-spacer>
+                <v-text-field :value="itemsPerPage" @input="itemsPerPage = parseInt($event, 10)"
+                              label="Items per page" max="15" min="-1" type="number">
+                </v-text-field>
+            </v-card-actions>
+            <v-btn @click="deleteBill" class="float-lg-right white--text" color="#F44336">
+                <v-icon color="white">mdi-delete</v-icon>
+                Delete
+            </v-btn>
         </v-card>
     </div>
 </template>
@@ -29,6 +45,10 @@
         name: "BillsList",
         data: function () {
             return {
+                page: 1,
+                pageCount: 0,
+                itemsPerPage: 5,
+                search: '',
                 pagination: {
                     sortBy: 'monthBill'
                 },
@@ -45,48 +65,51 @@
                     {text: 'Total', value: 'totalPrice'},
                 ],
                 id: [],
-                selectedRoom: "",
+                roomId: '',
+                selectedRoom: [],
                 activate_index: null,
-                bills: [
-                    {
-                        id: 0,
-                        monthBill: 0,
-                        roomRates: 0,
-                        elecNum: 0,
-                        elecPrice: 0,
-                        waterNum: 0,
-                        waterPrice: 0,
-                        totalPrice: 0
-                    }
-                ],
+                bills: [],
                 prevRoute: null
             }
         },
         watch: {
             $route(val) {
-                this.selectedRoom = val.params.id;
-                this.getBillByRoomId(this.selectedRoom);
+                this.roomId = val.params.id;
+                this.getRoom(this.roomId);
+                this.getBillByRoomId(this.roomId);
             }
         },
         beforeRouteEnter(to, from, next) {
             if (to.path === '/bill/' + from.params.id && from.path === '/room/' + from.params.id) {
                 next(vm => {
+                    vm.getRoom(from.params.id);
                     vm.getBillByRoomId(from.params.id)
                     vm.path = "/bill/" + from.params.id
                 })
             } else {
                 next(vm => {
-                    vm.getBillByRoomId(from.params.id)
                     vm.path = "/bill/" + from.params.id
                 })
             }
         },
         mounted() {
-            this.selectedRoom = this.$route.params.id;
-            this.getBillByRoomId(this.selectedRoom);
+            this.roomId = this.$route.params.id;
+            this.getRoom(this.roomId);
+            this.getBillByRoomId(this.roomId);
         },
         props: ["room"],
         methods: {
+            getRoom(id) {
+                http
+                    .get("/room/get/" + id)
+                    .then(response => {
+                        this.selectedRoom = response.data; // JSON are parsed automatically.
+                        console.log(response.data);
+                    })
+                    .catch(e => {
+                        console.log(e);
+                    });
+            },
             getBillByRoomId(roomId) {
                 http
                     .get("/bill/" + roomId)
@@ -112,7 +135,7 @@
                             http
                                 .delete("/bill/delete/" + this.selected[i].id)
                                 .then(response => {
-                                    this.getBillByRoomId(this.selectedRoom);
+                                    this.getBillByRoomId(this.roomId);
                                     console.log(response.data);
                                     Swal.fire({
                                         position: 'top-end',
@@ -143,7 +166,6 @@
                 else return 'green'
             },
         },
-
     };
 </script>
 

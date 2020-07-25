@@ -25,7 +25,9 @@
                             <v-icon>mdi-account-plus</v-icon>
                         </v-btn>
                     </router-link>
-                    <v-btn v-else>{{username}}</v-btn>
+                    <v-avatar v-else>
+                        <v-icon dark>mdi-account-circle</v-icon>
+                    </v-avatar>
 
                     <router-link class="text-decoration-none" to="/login" v-if="username == null">
                         <v-btn icon>
@@ -38,27 +40,31 @@
                         </v-btn>
                     </router-link>
                 </v-app-bar>
-                <v-navigation-drawer absolute src="https://cdn.vuetifyjs.com/images/parallax/material.jpg"
+                <v-navigation-drawer absolute src="https://cdn.vuetifyjs.com/images/parallax/material.jpg" temporary
                                      v-model="drawer"
                                      width="300">
-                    <v-img :aspect-ratio="16/9" src="https://cdn.vuetifyjs.com/images/parallax/material.jpg">
-                        <v-row align="end" class="white--text pa-2 fill-height">
-                            <v-col>
-                                <h2 class="heading">{{this.username}}</h2>
-                            </v-col>
-                        </v-row>
-                    </v-img>
+                    <template v-if="this.username" v-slot:prepend>
+                        <v-list-item two-line>
+                            <v-list-item-avatar>
+                                <v-icon dark x-large>mdi-account-circle</v-icon>
+                            </v-list-item-avatar>
+                            <v-list-item-content>
+                                <v-list-item-title>{{username}}</v-list-item-title>
+                                <v-list-item-subtitle>Logged In</v-list-item-subtitle>
+                            </v-list-item-content>
+                        </v-list-item>
+                        <v-divider></v-divider>
+                    </template>
                     <v-list nav>
-                        <v-list-item-group active-class="deep-purple--text text--accent-4">
+                        <v-list-item-group>
                             <router-link class="text-decoration-none" to="/">
-                                <v-list-item >
+                                <v-list-item>
                                     <v-list-item-action>
                                         <v-icon>mdi-home</v-icon>
                                     </v-list-item-action>
                                     <v-list-item-title>Home</v-list-item-title>
                                 </v-list-item>
                             </router-link>
-                            <v-divider></v-divider>
                             <router-link class="text-decoration-none" to="/rooms">
                                 <v-list-item>
                                     <v-list-item-action>

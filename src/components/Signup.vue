@@ -5,22 +5,26 @@
                 <h1 class="display-1">Register</h1>
             </v-card-title>
             <v-card-text>
-                <v-form>
-                    <v-text-field label="Username" prepend-icon="mdi-account-circle" v-model="username"/>
-                    <v-text-field :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'" :type="showPassword ? 'text' : 'password'"
-                                  @click:append="showPassword=!showPassword"
-                                  label="Password" prepend-icon="mdi-lock" v-model="password"
-                                  v-on:keyup.enter="checkSignup"/>
-                    <v-select :items="roomName" @change="getRoomByName(room.name)" @click="getRoomName"
-                              label="Choose your room"
-                              prepend-icon="mdi-door" v-model="room.name">
+                <v-form lazy-validation ref="form" v-model="valid">
+                    <v-text-field :rules="nameRules" label="Username" prepend-icon="mdi-account-circle"
+                                  required v-model="username"/>
+                    <v-text-field :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+                                  :rules="passRules"
+                                  :type="showPassword ? 'text' : 'password'"
+                                  @click:append="showPassword=!showPassword" label="Password" prepend-icon="mdi-lock"
+                                  required v-model="password" v-on:keyup.enter="checkSignup"/>
+                    <v-select :items="roomName" :rules="[v => !!v || 'Item is required']"
+                              @change="getRoomByName(room.name)"
+                              @click="getRoomName"
+                              label="Choose your room" prepend-icon="mdi-door" required
+                              v-model="room.name">
                     </v-select>
                 </v-form>
             </v-card-text>
             <v-card-actions>
                 <v-btn color="success" href="/login">Login</v-btn>
                 <v-spacer></v-spacer>
-                <v-btn @click="checkSignup" color="info">Sign Up</v-btn>
+                <v-btn :disabled="!valid" @click="checkSignup" color="info">Sign Up</v-btn>
             </v-card-actions>
         </v-card>
     </v-app>
@@ -34,9 +38,17 @@
         name: "Signup",
         data: function () {
             return {
+                valid: true,
                 showPassword: false,
                 username: "",
+                nameRules: [
+                    v => !!v || 'Name is required',
+                ],
                 password: "",
+                passRules: [
+                    v => !!v || 'Password is required',
+                    v => (v && v.length >= 6 && v.length <= 18) || 'Password must be between 6-18 characters',
+                ],
                 rooms: [],
                 roomName: [],
                 room: {
@@ -55,18 +67,16 @@
                     password: this.password,
                     room: this.room,
                 };
+                this.$refs.form.validate();
                 http
                     .put("/register", data)
                     .then(response => {
-                        this.username = response.data.username;
-                        this.password = response.data.password;
-                        this.room = response.data.room;
+                        console.log(response.data);
                         Swal.fire({
                             icon: 'success',
                             title: 'Success!',
                             text: 'Your account has been created!',
                         })
-                        console.log(response.data);
                     })
                     .catch(e => {
                         console.log(e);
@@ -92,7 +102,7 @@
                     console.log(e);
                 }
             },
-            getRoomByName: function (name) {
+            getRoomByName(name) {
                 http
                     .get("/room/" + name)
                     .then(response => {
@@ -103,10 +113,8 @@
                         console.log(e);
                     });
             }
-
         }
     }
-
 </script>
 
 <style scoped>

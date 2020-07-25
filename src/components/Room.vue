@@ -5,10 +5,10 @@
                 <h1 class="display-1">Room {{this.selectedRoom.name}}</h1>
             </v-card-title>
             <v-card-text>
-                <v-alert type="info">
+                <v-alert border="left" dense type="info">
                     Previous Electric Number: {{preElecNum}} | Previous Water Number: {{preWaterNum}}
                 </v-alert>
-                <v-alert :key="error" type="error" v-for="error in errors">
+                <v-alert :key="error" border="right" dense type="error" v-for="error in errors">
                     <div v-if="errors.length">{{error}}</div>
                 </v-alert>
                 <v-form>
@@ -65,7 +65,10 @@
                     </table>
                 </v-form>
             </v-card-text>
-            <v-btn @click="saveBill" class="float-lg-right" color="success">Save</v-btn>
+            <v-btn @click="saveBill" class="float-lg-right" color="success">
+                <v-icon>mdi-clipboard-check</v-icon>
+                Save
+            </v-btn>
         </v-card>
     </div>
 </template>
