@@ -65,7 +65,8 @@
                     </table>
                 </v-form>
             </v-card-text>
-            <v-btn @click="saveBill" class="float-lg-right" color="success">
+            <v-progress-linear :active="loading" :indeterminate="loading" absolute bottom/>
+            <v-btn @click="loading = true" class="float-lg-right" color="success">
                 <v-icon>mdi-clipboard-check</v-icon>
                 Save
             </v-btn>
@@ -81,6 +82,7 @@
         name: "Room",
         data: function () {
             return {
+                loading: false,
                 selectedRoom: [],
                 roomId: '',
                 errors: [],
@@ -108,7 +110,13 @@
             $route(val) {
                 this.roomId = val.params.id;
                 this.getRoom(this.roomId);
-            }
+            },
+            loading(val) {
+                this.saveBill();
+                setTimeout(() => (this.loading = false), 2000)
+                if (!val) return
+            },
+
         },
         mounted() {
             this.roomId = this.$route.params.id;
@@ -145,55 +153,57 @@
                 }
             },
             saveBill() {
-                var data = {
-                    preElecNum: this.preElecNum,
-                    preWaterNum: this.preWaterNum,
-                    updateId: this.updateId,
-                    check: this.check,
-                    billBymonth: this.billBymonth,
-                    monthBill: Number(this.monthBill),
-                    roomRates: this.roomRates,
-                    elecNum: this.elecNum,
-                    elecPrice: this.elecPrice,
-                    waterNum: this.waterNum,
-                    waterPrice: this.waterPrice,
-                    totalPrice: this.totalPrice,
-                    room: this.room
-                }
-                if (this.check == true && this.monthBill == this.billBymonth) {
-                    http
-                        .put("/bill/update/" + this.updateId, data)
-                        .then(response => {
-                            this.id = response.data.id;
-                        })
-                        .catch(e => {
-                            console.log(e);
+                if (this.loading == false) {
+                    var data = {
+                        preElecNum: this.preElecNum,
+                        preWaterNum: this.preWaterNum,
+                        updateId: this.updateId,
+                        check: this.check,
+                        billBymonth: this.billBymonth,
+                        monthBill: Number(this.monthBill),
+                        roomRates: this.roomRates,
+                        elecNum: this.elecNum,
+                        elecPrice: this.elecPrice,
+                        waterNum: this.waterNum,
+                        waterPrice: this.waterPrice,
+                        totalPrice: this.totalPrice,
+                        room: this.room
+                    }
+                    if (this.check == true && this.monthBill == this.billBymonth) {
+                        http
+                            .put("/bill/update/" + this.updateId, data)
+                            .then(response => {
+                                this.id = response.data.id;
+                            })
+                            .catch(e => {
+                                console.log(e);
+                            });
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success!',
+                            text: 'Update bill successfully!',
+                            showConfirmButton: false,
+                            timer: 2000
                         });
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Success!',
-                        text: 'Update bill successfully!',
-                        showConfirmButton: false,
-                        timer: 1500
-                    });
-                    this.$router.push({name: 'list-bill', params: {id: this.room.id}})
-                } else {
-                    http
-                        .post("/bill", data)
-                        .then(response => {
-                            this.id = response.data.id;
-                        })
-                        .catch(e => {
-                            console.log(e);
+                        this.$router.push({name: 'list-bill', params: {id: this.room.id}})
+                    } else {
+                        http
+                            .post("/bill", data)
+                            .then(response => {
+                                this.id = response.data.id;
+                            })
+                            .catch(e => {
+                                console.log(e);
+                            });
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success!',
+                            text: 'Add bill successfully!',
+                            showConfirmButton: false,
+                            timer: 2000
                         });
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Success!',
-                        text: 'Add bill successfully!',
-                        showConfirmButton: false,
-                        timer: 1500
-                    });
-                    this.$router.push({name: 'list-bill', params: {id: this.room.id}});
+                        this.$router.push({name: 'list-bill', params: {id: this.room.id}});
+                    }
                 }
             },
             getMonthByMonthAndRoomId() {

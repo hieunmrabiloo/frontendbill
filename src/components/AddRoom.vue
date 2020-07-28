@@ -12,7 +12,7 @@
             </v-alert>
         </v-overlay>
         <div v-else>
-            <v-card class="mx-auto ma-2" max-width="300" v-if="!submitted">
+            <v-card class="mx-auto ma-2" max-width="300" v-if="!snackbar">
                 <v-card-title>
                     <h3>Add Room</h3>
                 </v-card-title>
@@ -25,10 +25,14 @@
                     <v-btn @click="saveRoom" color="success">Add</v-btn>
                 </v-card-actions>
             </v-card>
-            <v-card class="mx-auto ma-2" max-width="300" v-else>
-                <v-alert m type="success">Submit Successfully</v-alert>
-                <v-btn @click="newRoom" class="float-lg-right" color="info">Add more</v-btn>
-            </v-card>
+            <v-snackbar v-model="snackbar" timeout="4000">
+                Add successfully!!!
+                <template v-slot:action="{ attrs }">
+                    <v-btn color="blue" text v-bind="attrs" @click="newRoom">
+                        Add more
+                    </v-btn>
+                </template>
+            </v-snackbar>
         </div>
     </div>
 </template>
@@ -40,11 +44,11 @@
         name: "AddRoom",
         data() {
             return {
+                snackbar: false,
                 room: {
                     id: 0,
                     name: "",
                 },
-                submitted: false,
                 username: '',
             };
         },
@@ -72,11 +76,11 @@
                     .catch(e => {
                         console.log(e);
                     });
-
-                this.submitted = true;
+                this.snackbar = true;
+                //this.submitted = true;
             },
             newRoom() {
-                this.submitted = false;
+                this.snackbar = false;
                 this.room = {};
             }
             /* eslint-enable no-console */
@@ -85,9 +89,5 @@
 </script>
 
 <style scoped>
-    .list {
-        text-align: left;
-        max-width: 1000px;
-        margin: auto;
-    }
+
 </style>

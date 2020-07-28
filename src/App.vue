@@ -26,7 +26,7 @@
                         </v-btn>
                     </router-link>
                     <v-avatar v-else>
-                        <v-icon dark>mdi-account-circle</v-icon>
+                        <v-icon dark large>mdi-account-circle</v-icon>
                     </v-avatar>
 
                     <router-link class="text-decoration-none" to="/login" v-if="username == null">

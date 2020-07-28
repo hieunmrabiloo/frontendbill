@@ -19,9 +19,11 @@
                             <v-menu bottom offset-y open-on-hover origin="center center" rounded="b-xl"
                                     transition="scale-transition">
                                 <template v-slot:activator="{ on, attrs }">
-                                    <v-btn color="primary" dark v-bind="attrs" v-on="on">
-                                        <v-icon>mdi-format-list-bulleted-type</v-icon>
-                                        Rooms
+                                    <v-btn :loading="loading" color="primary" dark v-bind="attrs" v-on="on">
+                                        <v-badge :content="rooms.length" transition="slide-x-transition">
+                                            <v-icon>mdi-format-list-bulleted-type</v-icon>
+                                            Rooms
+                                        </v-badge>
                                     </v-btn>
                                 </template>
                                 <v-list width="240">
@@ -82,6 +84,8 @@
         name: "RoomsList",
         data() {
             return {
+                loading: false,
+                hover: false,
                 selectedRoom: "1",
                 rooms: [],
                 username: '',
@@ -107,6 +111,7 @@
         methods: {
             /* eslint-disable no-console */
             retrieveRooms() {
+                this.loading = true;
                 const config = {
                     headers: {
                         "Authorization": "Bearer " + sessionStorage.token
@@ -116,6 +121,7 @@
                     .get("/rooms", config)
                     .then(response => {
                         this.rooms = response.data; // JSON are parsed automatically.
+                        setTimeout(() => (this.loading = false), 1000)
                     })
                     .catch(e => {
                         console.log(e);
@@ -167,6 +173,7 @@
             transform: scale(0.8);
         }
     }
+
     @keyframes hvr-icon-pulse {
         25% {
             -webkit-transform: scale(1.3);
@@ -177,6 +184,7 @@
             transform: scale(0.8);
         }
     }
+
     .hvr-icon-pulse {
         display: inline-block;
         vertical-align: middle;
@@ -184,12 +192,14 @@
         transform: perspective(1px) translateZ(0);
         box-shadow: 0 0 1px rgba(0, 0, 0, 0);
     }
+
     .hvr-icon-pulse .hvr-icon {
         -webkit-transform: translateZ(0);
         transform: translateZ(0);
         -webkit-transition-timing-function: ease-out;
         transition-timing-function: ease-out;
     }
+
     .hvr-icon-pulse:hover .hvr-icon, .hvr-icon-pulse:focus .hvr-icon, .hvr-icon-pulse:active .hvr-icon {
         -webkit-animation-name: hvr-icon-pulse;
         animation-name: hvr-icon-pulse;
@@ -200,6 +210,7 @@
         -webkit-animation-iteration-count: infinite;
         animation-iteration-count: infinite;
     }
+
     @-webkit-keyframes hvr-icon-buzz {
         50% {
             -webkit-transform: translateX(3px) rotate(2deg);
@@ -210,6 +221,7 @@
             transform: translateX(-3px) rotate(-2deg);
         }
     }
+
     @keyframes hvr-icon-buzz {
         50% {
             -webkit-transform: translateX(3px) rotate(2deg);
@@ -220,6 +232,7 @@
             transform: translateX(-3px) rotate(-2deg);
         }
     }
+
     .hvr-icon-buzz {
         display: inline-block;
         vertical-align: middle;
@@ -229,10 +242,12 @@
         -webkit-transition-duration: 0.3s;
         transition-duration: 0.3s;
     }
+
     .hvr-icon-buzz .hvr-icon {
         -webkit-transform: translateZ(0);
         transform: translateZ(0);
     }
+
     .hvr-icon-buzz:hover .hvr-icon, .hvr-icon-buzz:focus .hvr-icon, .hvr-icon-buzz:active .hvr-icon {
         -webkit-animation-name: hvr-icon-buzz;
         animation-name: hvr-icon-buzz;
