@@ -19,6 +19,7 @@
                             <th>Room Rates</th>
                             <th>Electricity</th>
                             <th>Water</th>
+                            <th>Other</th>
                             <th>Total</th>
                         </tr>
                         </thead>
@@ -59,6 +60,8 @@
                                     <option value="40">40k/num</option>
                                 </select>
                             </td>
+                            <td><input class="form-control" id="other" type="text" v-model="other">
+                            </td>
                             <td><input class="form-control" readonly type="text" v-model="totalPrice"></td>
                         </tr>
                         </tbody>
@@ -98,12 +101,13 @@
                 elecPrice: 0,
                 waterNum: 0,
                 waterPrice: 0,
+                other: 0,
             };
         },
         computed: {
             totalPrice: function () {
                 return Number(this.roomRates) + Number((this.elecNum - this.preElecNum) * this.elecPrice)
-                    + Number((this.waterNum - this.preWaterNum) * this.waterPrice);
+                    + Number((this.waterNum - this.preWaterNum) * this.waterPrice) + Number(this.other);
             }
         },
         watch: {
@@ -146,7 +150,7 @@
             },
             checkMonth() {
                 this.errors = [];
-                if (this.monthBill == '' || this.monthBill == 0) {
+                if (this.monthBill === '' || this.monthBill === 0) {
                     this.errors.push('You must input month!')
                 } else if (this.monthBill > 12) {
                     this.errors.push('Month cant greater than 12')
@@ -166,6 +170,7 @@
                         elecPrice: this.elecPrice,
                         waterNum: this.waterNum,
                         waterPrice: this.waterPrice,
+                        other: this.other,
                         totalPrice: this.totalPrice,
                         room: this.room
                     }

@@ -67,7 +67,7 @@
                         </div>
                     </v-col>
                     <v-col>
-                        <v-card class="mx-auto" max-height="600" max-width="630">
+                        <v-card class="mx-auto" max-height="600" max-width="750">
                             <router-view/>
                         </v-card>
                     </v-col>

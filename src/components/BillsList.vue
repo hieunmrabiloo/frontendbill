@@ -62,6 +62,7 @@
                     {text: 'Electricity Price', value: 'elecPrice'},
                     {text: 'Water Number', value: 'waterNum'},
                     {text: 'Water Price', value: 'waterPrice'},
+                    {text: 'Others', value: 'other'},
                     {text: 'Total', value: 'totalPrice'},
                 ],
                 id: [],
