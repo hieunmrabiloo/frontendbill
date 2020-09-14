@@ -44,6 +44,12 @@
     import Swal from "sweetalert2";
     import {Component, Prop, Vue, Watch} from "vue-property-decorator";
 
+    Component.registerHooks([
+        'beforeRouteEnter',
+        'beforeRouteLeave',
+        'beforeRouteUpdate'
+    ])
+
     @Component
     export default class BillsList extends Vue {
         // name: "BillsList",
@@ -69,7 +75,7 @@
         roomId: string = '';
         selectedRoom: Array<any> = [];
         bills: Array<any> = [];
-        @Prop() room!: any;
+        @Prop() room!: object;
 
         @Watch('$route')
         routeChanged(val) {
@@ -136,6 +142,17 @@
                 confirmButtonText: 'Yes, delete it!'
             }).then((result) => {
                 if (result.value) {
+                    if(this.selected.length <= 0){
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'error',
+                            title: 'Please select first!',
+                            showConfirmButton: false,
+                            timer: 1800
+                        })
+                        this.delLoading = false;
+                        return;
+                    }
                     for (let i = 0; i < this.selected.length; i++) {
                         http
                             .delete("/bill/delete/" + this.selected[i].id)

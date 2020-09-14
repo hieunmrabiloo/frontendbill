@@ -101,7 +101,7 @@
         waterNum: number = 0;
         waterPrice: number = 0;
         other: number = 0;
-        @Prop() room!: any;
+        @Prop() room!: object;
 
         get totalPrice(): number {
             return Number(this.roomRates) + Number((this.elecNum - this.preElecNum) * this.elecPrice)
