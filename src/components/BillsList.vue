@@ -39,51 +39,46 @@
         </v-card>
     </div>
 </template>
-<script>
+<script lang="ts">
     import http from "../http-common";
     import Swal from "sweetalert2";
+    import {Component, Prop, Vue, Watch} from "vue-property-decorator";
 
-    export default {
-        name: "BillsList",
-        data: function () {
-            return {
-                loading: false,
-                delLoading: false,
-                page: 1,
-                pageCount: 0,
-                itemsPerPage: 5,
-                search: '',
-                singleSelect: false,
-                selected: [],
-                headers: [
-                    {text: 'Month', value: 'monthBill', align: 'left', sortable: 'false'},
-                    {text: 'Room Rates', value: 'roomRates'},
-                    {text: 'Electricity Number', value: 'elecNum'},
-                    {text: 'Electricity Price', value: 'elecPrice'},
-                    {text: 'Water Number', value: 'waterNum'},
-                    {text: 'Water Price', value: 'waterPrice'},
-                    {text: 'Others', value: 'other'},
-                    {text: 'Total', value: 'totalPrice'},
-                ],
-                id: [],
-                roomId: '',
-                selectedRoom: [],
-                bills: [],
-                prevRoute: null
-            }
-        },
-        watch: {
-            $route(val) {
-                this.roomId = val.params.id;
-                this.getRoom(this.roomId);
-                this.getBillByRoomId(this.roomId);
-            },
-            // loading(val) {
-            //     //this.deleteBill();
-            //     if (!val) return
-            //     setTimeout(() => (this.loading = false), 2000)
-            // },
-        },
+    @Component
+    export default class BillsList extends Vue {
+        // name: "BillsList",
+        loading: boolean = false;
+        delLoading: boolean = false;
+        page: number = 1;
+        pageCount: number = 0;
+        itemsPerPage: number = 5;
+        search: string = '';
+        singleSelect: boolean = false;
+        selected: Array<any> = [];
+        headers: Array<any> = [
+            { text: 'Month', value: 'monthBill', align: 'left', sortable: 'false' },
+            { text: 'Room Rates', value: 'roomRates' },
+            { text: 'Electricity Number', value: 'elecNum' },
+            { text: 'Electricity Price', value: 'elecPrice' },
+            { text: 'Water Number', value: 'waterNum' },
+            { text: 'Water Price', value: 'waterPrice' },
+            { text: 'Others', value: 'other' },
+            { text: 'Total', value: 'totalPrice' },
+        ];
+        id: Array<any> = [];
+        roomId: string = '';
+        selectedRoom: Array<any> = [];
+        bills: Array<any> = [];
+        @Prop() room!: any;
+
+        @Watch('$route')
+        routeChanged(val) {
+            this.$route = val;
+            this.roomId = val.params.id;
+            this.getRoom(this.roomId);
+            this.getBillByRoomId(this.roomId);
+        }
+
         beforeRouteEnter(to, from, next) {
             if (to.path === '/bill/' + from.params.id && from.path === '/room/' + from.params.id) {
                 next(vm => {
@@ -96,87 +91,89 @@
                     vm.path = "/bill/" + from.params.id
                 })
             }
-        },
+        }
+
         mounted() {
             this.roomId = this.$route.params.id;
             this.getRoom(this.roomId);
             this.getBillByRoomId(this.roomId);
-        },
-        props: ["room"],
-        methods: {
-            getRoom(id) {
-                http
-                    .get("/room/get/" + id)
-                    .then(response => {
-                        this.selectedRoom = response.data; // JSON are parsed automatically.
-                        console.log(response.data);
-                    })
-                    .catch(e => {
-                        console.log(e);
-                    });
-            },
-            getBillByRoomId(roomId) {
-                this.loading = true;
-                http
-                    .get("/bill/" + roomId)
-                    .then(response => {
-                        this.bills = response.data;
-                        setTimeout(() => (this.loading = false), 2000)
-                    })
-                    .catch(e => {
-                        console.log(e);
-                    });
-            },
-            deleteBill() {
-                this.delLoading = true;
-                Swal.fire({
-                    title: 'Are you sure?',
-                    text: "You won't be able to revert this!",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Yes, delete it!'
-                }).then((result) => {
-                    if (result.value) {
-                        for (let i = 0; i < this.selected.length; i++) {
-                            http
-                                .delete("/bill/delete/" + this.selected[i].id)
-                                .then(response => {
-                                    this.getBillByRoomId(this.roomId);
-                                    console.log(response.data);
-                                    Swal.fire({
-                                        position: 'top-end',
-                                        icon: 'success',
-                                        title: 'Selected bills has been deleted!',
-                                        showConfirmButton: false,
-                                        timer: 1800
-                                    })
-                                    this.delLoading = false;
-                                })
-                                .catch(e => {
-                                    console.log(e);
-                                });
-                        }
-                    } else {
-                        Swal.fire({
-                            position: 'top-end',
-                            icon: 'error',
-                            title: 'You have been cancel delete!',
-                            showConfirmButton: false,
-                            timer: 1800
-                        })
-                        this.delLoading = false;
-                    }
+        }
+
+        getRoom(id: string): void {
+            http
+                .get("/room/get/" + id)
+                .then(response => {
+                    this.selectedRoom = response.data; // JSON are parsed automatically.
+                    console.log(response.data);
                 })
-            },
-            getColor(total) {
-                if (total > 7000) return 'red'
-                else if (total > 4000) return 'orange'
-                else return 'green'
-            },
-        },
-    };
+                .catch(e => {
+                    console.log(e);
+                });
+        }
+
+        getBillByRoomId(roomId: string): void {
+            this.loading = true;
+            http
+                .get("/bill/" + roomId)
+                .then(response => {
+                    this.bills = response.data;
+                    setTimeout(() => (this.loading = false), 2000)
+                })
+                .catch(e => {
+                    console.log(e);
+                });
+        }
+
+        deleteBill(): void {
+            this.delLoading = true;
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.value) {
+                    for (let i = 0; i < this.selected.length; i++) {
+                        http
+                            .delete("/bill/delete/" + this.selected[i].id)
+                            .then(response => {
+                                this.getBillByRoomId(this.roomId);
+                                console.log(response.data);
+                                Swal.fire({
+                                    position: 'top-end',
+                                    icon: 'success',
+                                    title: 'Selected bills has been deleted!',
+                                    showConfirmButton: false,
+                                    timer: 1800
+                                })
+                                this.delLoading = false;
+                            })
+                            .catch(e => {
+                                console.log(e);
+                            });
+                    }
+                } else {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'error',
+                        title: 'You have been cancel delete!',
+                        showConfirmButton: false,
+                        timer: 1800
+                    })
+                    this.delLoading = false;
+                }
+            })
+        }
+
+        getColor(total: number): string {
+            if (total > 7000) return 'red'
+            else if (total > 4000) return 'orange'
+            else return 'green'
+        }
+    }
 </script>
 
 <style scoped>

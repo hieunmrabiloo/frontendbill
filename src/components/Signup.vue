@@ -30,89 +30,84 @@
     </v-app>
 </template>
 
-<script>
+<script lang="ts">
     import http from "../http-common";
     import Swal from "sweetalert2";
+    import {Vue, Component} from "vue-property-decorator";
 
-    export default {
-        name: "Signup",
-        data: function () {
-            return {
-                valid: true,
-                showPassword: false,
-                username: "",
-                nameRules: [
-                    v => !!v || 'Name is required',
-                ],
-                password: "",
-                passRules: [
-                    v => !!v || 'Password is required',
-                    v => (v && v.length >= 6 && v.length <= 18) || 'Password must be between 6-18 characters',
-                ],
-                rooms: [],
-                roomName: [],
-                room: {
-                    id: 0,
-                    name: "",
-                },
-            }
-        },
+    @Component
+    export default class Signup extends Vue {
+        valid: boolean = true;
+        showPassword: boolean = false;
+        username: "";
+        nameRules: ((v) => boolean | string)[] = [v => !!v || 'Name is required'];
+        password: "";
+        passRules: ((v) => boolean | string)[] = [
+            v => !!v || 'Password is required',
+            v => (v && v.length >= 6 && v.length <= 18) || 'Password must be between 6-18 characters',
+        ];
+        rooms: Array<any> = [];
+        roomName: Array<any> = [];
+        room: { id: number, name: string } = {id: 0, name: "",};
+
         mounted() {
             this.retrieveRooms();
-        },
-        methods: {
-            checkSignup() {
-                var data = {
-                    username: this.username,
-                    password: this.password,
-                    room: this.room,
-                };
-                this.$refs.form.validate();
-                http
-                    .put("/register", data)
-                    .then(response => {
-                        console.log(response.data);
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Success!',
-                            text: 'Your account has been created!',
-                        })
+        }
+
+        checkSignup() {
+            var data = {
+                username: this.username,
+                password: this.password,
+                room: this.room,
+            };
+            this.$refs.form.validate();
+            http
+                .put("/register", data)
+                .then(response => {
+                    console.log(response.data);
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success!',
+                        text: 'Your account has been created!',
                     })
-                    .catch(e => {
-                        console.log(e);
-                    });
-            },
-            retrieveRooms() {
-                http
-                    .get("/user/rooms")
-                    .then(response => {
-                        this.rooms = response.data; // JSON are parsed automatically.
-                        console.log(response.data);
-                    })
-                    .catch(e => {
-                        console.log(e);
-                    });
-            },
-            getRoomName() {
-                try {
-                    for (let i = 0; i < this.rooms.length; i++) {
-                        this.roomName.push(this.rooms[i].name);
-                    }
-                } catch (e) {
+                })
+                .catch(e => {
                     console.log(e);
+                });
+        }
+
+        retrieveRooms() {
+            http
+                .get("/user/rooms")
+                .then(response => {
+                    this.rooms = response.data; // JSON are parsed automatically.
+                    console.log(response.data);
+                })
+                .catch(e => {
+                    console.log(e);
+                });
+        }
+
+        getRoomName() {
+            try {
+                for (let i = 0; i < this.rooms.length; i++) {
+                    this.roomName.push(this.rooms[i].name);
                 }
-            },
-            getRoomByName(name) {
-                http
-                    .get("/room/" + name)
-                    .then(response => {
-                        this.room = response.data; // JSON are parsed automatically.
-                        console.log(response.data);
-                    })
-                    .catch(e => {
-                        console.log(e);
-                    });
+            } catch (e) {
+                console.log(e);
             }
+        }
+
+        getRoomByName(name) {
+            http
+                .get("/room/" + name)
+                .then(response => {
+                    this.room = response.data; // JSON are parsed automatically.
+                    console.log(response.data);
+                })
+                .catch(e => {
+                    console.log(e);
+                });
         }
     }
 </script>

@@ -77,87 +77,85 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
     import http from "../http-common";
+    import {Component, Vue, Watch} from "vue-property-decorator";
 
-    export default {
-        name: "RoomsList",
-        data() {
-            return {
-                loading: false,
-                hover: false,
-                selectedRoom: "1",
-                rooms: [],
-                username: '',
-                roomId: 0,
-                roomName: '',
-            };
-        },
-        watch: {
-            $route() {
-                this.retrieveRooms();
-            }
-        },
+    @Component
+    export default class RoomsList extends Vue {
+        loading: boolean = false;
+        hover: boolean = false;
+        selectedRoom: string = "1";
+        rooms: Array<any> = [];
+        username: string = '';
+        roomId: number = 0;
+        roomName: string = '';
+
+        @Watch('$route')
+        routeChanged() {
+            this.retrieveRooms();
+        }
+
         created() {
             this.username = sessionStorage.getItem('username');
             this.retrieveRooms();
-        },
+        }
+
         mounted() {
             if (this.username != null) {
                 this.retrieveRooms();
                 this.getRoomIdByUsername();
             }
-        },
-        methods: {
-            /* eslint-disable no-console */
-            retrieveRooms() {
-                this.loading = true;
-                const config = {
-                    headers: {
-                        "Authorization": "Bearer " + sessionStorage.token
-                    }
+        }
+
+        retrieveRooms(): void {
+            this.loading = true;
+            const config = {
+                headers: {
+                    "Authorization": "Bearer " + sessionStorage.token
                 }
-                http
-                    .get("/rooms", config)
-                    .then(response => {
-                        this.rooms = response.data; // JSON are parsed automatically.
-                        setTimeout(() => (this.loading = false), 1000)
-                    })
-                    .catch(e => {
-                        console.log(e);
-                    });
-            },
-            getRoomIdByUsername() {
-                const config = {
-                    headers: {
-                        "Authorization": "Bearer " + sessionStorage.token
-                    }
+            }
+            http
+                .get("/rooms", config)
+                .then(response => {
+                    this.rooms = response.data; // JSON are parsed automatically.
+                    setTimeout(() => (this.loading = false), 1000)
+                })
+                .catch(e => {
+                    console.log(e);
+                });
+        }
+
+        getRoomIdByUsername(): void {
+            const config = {
+                headers: {
+                    "Authorization": "Bearer " + sessionStorage.token
                 }
-                http
-                    .get("/user/" + this.username, config)
-                    .then(response => {
-                        this.roomId = response.data;
-                    })
-                    .catch(e => {
-                        console.log(e);
-                    })
-            },
-            getRoomByRoomId() {
-                const config = {
-                    headers: {
-                        "Authorization": "Bearer " + sessionStorage.token
-                    }
+            }
+            http
+                .get("/user/" + this.username, config)
+                .then(response => {
+                    this.roomId = response.data;
+                })
+                .catch(e => {
+                    console.log(e);
+                })
+        }
+
+        getRoomByRoomId(): void {
+            const config = {
+                headers: {
+                    "Authorization": "Bearer " + sessionStorage.token
                 }
-                http
-                    .get("/room/user/" + this.roomId, config)
-                    .then(response => {
-                        this.roomName = response.data;
-                    })
-                    .catch(e => {
-                        console.log(e);
-                    })
-            },
-            /* eslint-enable no-console */
+            }
+            http
+                .get("/room/user/" + this.roomId, config)
+                .then(response => {
+                    this.roomName = response.data;
+                })
+                .catch(e => {
+                    console.log(e);
+                })
         }
     }
 </script>

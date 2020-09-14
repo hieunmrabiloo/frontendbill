@@ -23,62 +23,56 @@
     </v-app>
 </template>
 
-<script>
+<script lang="ts">
     import http from "../http-common";
-    import Swal from 'sweetalert2'
+    import Swal from 'sweetalert2';
+    import {Component, Vue} from "vue-property-decorator";
 
-    export default {
-        name: "login",
-        data: function () {
-            return {
-                valid: true,
-                showPassword: false,
-                username: "",
-                nameRules: [
-                    v => !!v || 'Name is required',
-                ],
-                password: "",
-                passRules: [
-                    v => !!v || 'Password is required',
-                    v => (v && v.length >= 6 && v.length <= 18) || 'Password must be between 6-18 characters',
-                ],
+    @Component
+    export default class Login extends Vue {
+        // name: "login",
+        valid: boolean = true;
+        showPassword: boolean = false;
+        username: string = "";
+        nameRules: ((v) => boolean | string)[] = [v => !!v || 'Name is required'];
+        password: string = "";
+        passRules: ((v) => boolean | string)[] = [
+            v => !!v || 'Password is required',
+            v => (v && v.length >= 6 && v.length <= 18) || 'Password must be between 6-18 characters'
+        ];
+
+        checkLogin(): void {
+            const data = {
+                username: this.username,
+                password: this.password
             }
-        },
-        methods: {
-            checkLogin() {
-                const data = {
-                    username: this.username,
-                    password: this.password
-                }
-                this.$refs.form.validate();
-                http
-                    .post("/login", data)
-                    .then(response => {
-                            sessionStorage.token = response.data;
-                            sessionStorage.setItem('username', this.username);
-                            console.log(response.data);
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Success!',
-                                text: 'Login Successfully!!!',
-                            })
-                            this.$router.push('/');
-                        }
-                    )
-                    .catch(e => {
-                        if (e.response.status === 400 && this.valid === true) {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Oops...',
-                                text: 'Username or password incorrect!',
-                            })
-                        }
-                        console.log(e);
-                    });
-            }
+            this.$refs.form.validate();
+            http
+                .post("/login", data)
+                .then(response => {
+                        sessionStorage.token = response.data;
+                        sessionStorage.setItem('username', this.username);
+                        console.log(response.data);
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success!',
+                            text: 'Login Successfully!!!',
+                        })
+                        this.$router.push('/');
+                    }
+                )
+                .catch(e => {
+                    if (e.response.status === 400 && this.valid === true) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'Username or password incorrect!',
+                        })
+                    }
+                    console.log(e);
+                });
         }
     }
-
 </script>
 
 <style scoped>

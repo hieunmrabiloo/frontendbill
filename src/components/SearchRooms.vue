@@ -47,34 +47,29 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
     import http from "../http-common";
+    import {Component, Vue} from "vue-property-decorator";
 
-    export default {
-        name: "SearchRooms",
-        data() {
-            return {
-                submitted: false,
-                name: '',
-                rooms: []
-            };
-        },
-        methods: {
-            /* eslint-disable no-console */
-            searchRooms() {
-                http
-                    .get("/room/search/" + this.name)
-                    .then(response => {
-                        this.rooms = response.data; // JSON are parsed automatically.
-                        console.log(response.data);
-                    })
-                    .catch(e => {
-                        console.log(e);
-                    });
-                this.submitted = true;
-            }
-            /* eslint-enable no-console */
+    @Component
+    export default class SearchRooms extends Vue {
+        submitted: boolean = false;
+        name: string = '';
+        rooms: Array<any> = [];
+
+        searchRooms(): void {
+            http
+                .get("/room/search/" + this.name)
+                .then(response => {
+                    this.rooms = response.data; // JSON are parsed automatically.
+                    console.log(response.data);
+                })
+                .catch(e => {
+                    console.log(e);
+                });
+            this.submitted = true;
         }
+
     }
 </script>
 

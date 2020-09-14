@@ -9,11 +9,12 @@
         </ul>
     </div>
 </template>
-<script>
+<script lang="ts">
     import Swal from "sweetalert2";
+    import {Component, Vue} from "vue-property-decorator";
 
-    export default {
-        name: "Logout",
+    @Component
+    export default class Logout extends Vue {
         created() {
             sessionStorage.removeItem('username');
             sessionStorage.token = '';

@@ -77,199 +77,205 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
     import http from "../http-common";
     import Swal from "sweetalert2";
+    import {Component, Prop, Vue, Watch} from "vue-property-decorator";
 
-    export default {
-        name: "Room",
-        data: function () {
-            return {
-                loading: false,
-                selectedRoom: [],
-                roomId: '',
-                errors: [],
-                preElecNum: 0,
-                preWaterNum: 0,
-                updateId: 0,
-                check: false,
-                billBymonth: 0,
-                id: 0,
-                monthBill: 1,
-                roomRates: 0,
-                elecNum: 0,
-                elecPrice: 0,
-                waterNum: 0,
-                waterPrice: 0,
-                other: 0,
-            };
-        },
-        computed: {
-            totalPrice: function () {
-                return Number(this.roomRates) + Number((this.elecNum - this.preElecNum) * this.elecPrice)
-                    + Number((this.waterNum - this.preWaterNum) * this.waterPrice) + Number(this.other);
-            }
-        },
-        watch: {
-            $route(val) {
-                this.roomId = val.params.id;
-                this.getRoom(this.roomId);
-            },
-            loading(val) {
-                this.saveBill();
-                setTimeout(() => (this.loading = false), 2000)
-                if (!val) return
-            },
+    @Component
+    export default class Room extends Vue {
+        loading: boolean = false;
+        selectedRoom: Array<any> = [];
+        roomId: string = '';
+        errors: Array<any> = [];
+        preElecNum: number = 0;
+        preWaterNum: number = 0;
+        updateId: number = 0;
+        check: boolean = false;
+        billBymonth: number = 0;
+        id: number = 0;
+        monthBill: number = 1;
+        roomRates: number = 0;
+        elecNum: number = 0;
+        elecPrice: number = 0;
+        waterNum: number = 0;
+        waterPrice: number = 0;
+        other: number = 0;
+        @Prop() room!: any;
 
-        },
+        get totalPrice(): number {
+            return Number(this.roomRates) + Number((this.elecNum - this.preElecNum) * this.elecPrice)
+                + Number((this.waterNum - this.preWaterNum) * this.waterPrice) + Number(this.other);
+        }
+
+        @Watch('$route')
+        routeChanged(val) {
+            this.roomId = val.params.id;
+            this.getRoom(this.roomId);
+        }
+
+        @Watch('loading')
+        loadingChanged(val) {
+            this.saveBill();
+            setTimeout(() => (this.loading = false), 2000)
+            if (!val) return
+        }
+
         mounted() {
             this.roomId = this.$route.params.id;
             this.getRoom(this.roomId);
-        },
-        props: ["room"],
-        methods: {
-            getRoom(id) {
-                http
-                    .get("/room/get/" + id)
-                    .then(response => {
-                        this.selectedRoom = response.data; // JSON are parsed automatically.
-                        console.log(response.data);
-                    })
-                    .catch(e => {
-                        console.log(e);
-                    });
-            },
-            checkForm() {
-                this.errors = [];
-                if (this.elecNum <= this.preElecNum) {
-                    this.errors.push('Current electric number must be greater than Previous electric number!')
+        }
+
+        getRoom(id): void {
+            http
+                .get("/room/get/" + id)
+                .then(response => {
+                    this.selectedRoom = response.data; // JSON are parsed automatically.
+                    console.log(response.data);
+                })
+                .catch(e => {
+                    console.log(e);
+                });
+        }
+
+        checkForm(): void {
+            this.errors = [];
+            if (this.elecNum <= this.preElecNum) {
+                this.errors.push('Current electric number must be greater than Previous electric number!')
+            }
+            if (this.waterNum <= this.preWaterNum) {
+                this.errors.push('Current water number must be greater than Previous water number!')
+            }
+        }
+
+        checkMonth(): void {
+            this.errors = [];
+            if (this.monthBill === '' || this.monthBill === 0) {
+                this.errors.push('You must input month!')
+            } else if (this.monthBill > 12) {
+                this.errors.push('Month cant greater than 12')
+            }
+        }
+
+        saveBill(): void {
+            if (this.loading == false) {
+                var data = {
+                    preElecNum: this.preElecNum,
+                    preWaterNum: this.preWaterNum,
+                    updateId: this.updateId,
+                    check: this.check,
+                    billBymonth: this.billBymonth,
+                    monthBill: Number(this.monthBill),
+                    roomRates: this.roomRates,
+                    elecNum: this.elecNum,
+                    elecPrice: this.elecPrice,
+                    waterNum: this.waterNum,
+                    waterPrice: this.waterPrice,
+                    other: this.other,
+                    totalPrice: this.totalPrice,
+                    room: this.room
                 }
-                if (this.waterNum <= this.preWaterNum) {
-                    this.errors.push('Current water number must be greater than Previous water number!')
-                }
-            },
-            checkMonth() {
-                this.errors = [];
-                if (this.monthBill === '' || this.monthBill === 0) {
-                    this.errors.push('You must input month!')
-                } else if (this.monthBill > 12) {
-                    this.errors.push('Month cant greater than 12')
-                }
-            },
-            saveBill() {
-                if (this.loading == false) {
-                    var data = {
-                        preElecNum: this.preElecNum,
-                        preWaterNum: this.preWaterNum,
-                        updateId: this.updateId,
-                        check: this.check,
-                        billBymonth: this.billBymonth,
-                        monthBill: Number(this.monthBill),
-                        roomRates: this.roomRates,
-                        elecNum: this.elecNum,
-                        elecPrice: this.elecPrice,
-                        waterNum: this.waterNum,
-                        waterPrice: this.waterPrice,
-                        other: this.other,
-                        totalPrice: this.totalPrice,
-                        room: this.room
-                    }
-                    if (this.check == true && this.monthBill == this.billBymonth) {
-                        http
-                            .put("/bill/update/" + this.updateId, data)
-                            .then(response => {
-                                this.id = response.data.id;
-                            })
-                            .catch(e => {
-                                console.log(e);
-                            });
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Success!',
-                            text: 'Update bill successfully!',
-                            showConfirmButton: false,
-                            timer: 2000
+                if (this.check == true && this.monthBill == this.billBymonth) {
+                    http
+                        .put("/bill/update/" + this.updateId, data)
+                        .then(response => {
+                            this.id = response.data.id;
+                        })
+                        .catch(e => {
+                            console.log(e);
                         });
-                        this.$router.push({name: 'list-bill', params: {id: this.room.id}})
-                    } else {
-                        http
-                            .post("/bill", data)
-                            .then(response => {
-                                this.id = response.data.id;
-                            })
-                            .catch(e => {
-                                console.log(e);
-                            });
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Success!',
-                            text: 'Add bill successfully!',
-                            showConfirmButton: false,
-                            timer: 2000
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success!',
+                        text: 'Update bill successfully!',
+                        showConfirmButton: false,
+                        timer: 2000
+                    });
+                    this.$router.push({name: 'list-bill', params: {id: this.room.id}})
+                } else {
+                    http
+                        .post("/bill", data)
+                        .then(response => {
+                            this.id = response.data.id;
+                        })
+                        .catch(e => {
+                            console.log(e);
                         });
-                        this.$router.push({name: 'list-bill', params: {id: this.room.id}});
-                    }
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success!',
+                        text: 'Add bill successfully!',
+                        showConfirmButton: false,
+                        timer: 2000
+                    });
+                    this.$router.push({name: 'list-bill', params: {id: this.room.id}});
                 }
-            },
-            getMonthByMonthAndRoomId() {
-                http
-                    .get("/bill/month/" + this.monthBill + "/" + this.room.id)
-                    .then(response => {
-                        this.billBymonth = response.data;
-                    })
-                    .catch(e => {
-                        console.log(e);
-                    });
-            },
-            getCheckByMonthAndRoomId() {
-                http
-                    .get("/bill/check/" + this.monthBill + "/" + this.room.id)
-                    .then(response => {
-                        this.check = response.data;
-                    })
-                    .catch(e => {
-                        console.log(e);
-                    });
-            },
-            getIdByMonthAndRoomId() {
-                http
-                    .get("/bill/id/" + this.monthBill + "/" + this.room.id)
-                    .then(response => {
-                        this.updateId = response.data;
-                    })
-                    .catch(e => {
-                        console.log(e);
-                    });
-            },
-            getPreElecByMonthAndRoomId() {
-                http
-                    .get("/bill/elec/" + (this.monthBill - 1) + "/" + this.room.id)
-                    .then(response => {
-                        this.preElecNum = response.data;
-                    })
-                    .catch(e => {
-                        console.log(e);
-                    });
-            },
-            getPreWaterByMonthAndRoomId() {
-                http
-                    .get("/bill/water/" + (this.monthBill - 1) + "/" + this.room.id)
-                    .then(response => {
-                        this.preWaterNum = response.data;
-                    })
-                    .catch(e => {
-                        console.log(e);
-                    });
-            },
-            comboGet() {
-                if (this.monthBill != '' && this.monthBill != 0) {
-                    this.getCheckByMonthAndRoomId();
-                    this.getIdByMonthAndRoomId();
-                    this.getMonthByMonthAndRoomId();
-                    this.getPreElecByMonthAndRoomId();
-                    this.getPreWaterByMonthAndRoomId();
-                }
-            },
+            }
+        }
+
+        getMonthByMonthAndRoomId(): void {
+            http
+                .get("/bill/month/" + this.monthBill + "/" + this.room.id)
+                .then(response => {
+                    this.billBymonth = response.data;
+                })
+                .catch(e => {
+                    console.log(e);
+                });
+        }
+
+        getCheckByMonthAndRoomId(): void {
+            http
+                .get("/bill/check/" + this.monthBill + "/" + this.room.id)
+                .then(response => {
+                    this.check = response.data;
+                })
+                .catch(e => {
+                    console.log(e);
+                });
+        }
+
+        getIdByMonthAndRoomId(): void {
+            http
+                .get("/bill/id/" + this.monthBill + "/" + this.room.id)
+                .then(response => {
+                    this.updateId = response.data;
+                })
+                .catch(e => {
+                    console.log(e);
+                });
+        }
+
+        getPreElecByMonthAndRoomId(): void {
+            http
+                .get("/bill/elec/" + (this.monthBill - 1) + "/" + this.room.id)
+                .then(response => {
+                    this.preElecNum = response.data;
+                })
+                .catch(e => {
+                    console.log(e);
+                });
+        }
+
+        getPreWaterByMonthAndRoomId(): void {
+            http
+                .get("/bill/water/" + (this.monthBill - 1) + "/" + this.room.id)
+                .then(response => {
+                    this.preWaterNum = response.data;
+                })
+                .catch(e => {
+                    console.log(e);
+                });
+        }
+
+        comboGet(): void {
+            if (this.monthBill != '' && this.monthBill != 0) {
+                this.getCheckByMonthAndRoomId();
+                this.getIdByMonthAndRoomId();
+                this.getMonthByMonthAndRoomId();
+                this.getPreElecByMonthAndRoomId();
+                this.getPreWaterByMonthAndRoomId();
+            }
         }
     }
 </script>

@@ -25,10 +25,10 @@
                     <v-btn @click="saveRoom" color="success">Add</v-btn>
                 </v-card-actions>
             </v-card>
-            <v-snackbar v-model="snackbar" timeout="4000">
+            <v-snackbar timeout="4000" v-model="snackbar">
                 Add successfully!!!
                 <template v-slot:action="{ attrs }">
-                    <v-btn color="blue" text v-bind="attrs" @click="newRoom">
+                    <v-btn @click="newRoom" color="blue" text v-bind="attrs">
                         Add more
                     </v-btn>
                 </template>
@@ -37,53 +37,50 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
     import http from "../http-common";
+    import {Component, Vue} from "vue-property-decorator";
 
-    export default {
-        name: "AddRoom",
-        data() {
-            return {
-                snackbar: false,
-                room: {
-                    id: 0,
-                    name: "",
-                },
-                username: '',
-            };
-        },
+    @Component
+    export default class AddRoom extends Vue {
+        // name: "AddRoom";
+        snackbar: boolean = false;
+        room: { id: number, name: string, } = {id: 0, name: ""};
+        username: string = "";
+
         created() {
             this.username = sessionStorage.getItem('username');
-        },
-        methods: {
-            /* eslint-disable no-console */
-            saveRoom() {
-                const config = {
-                    headers: {
-                        "Authorization": "Bearer " + sessionStorage.token
-                    }
-                }
-                var data = {
-                    name: this.room.name,
-                };
+        }
 
-                http
-                    .post("/room", data, config)
-                    .then(response => {
-                        this.room.id = response.data.id;
-                        console.log(response.data);
-                    })
-                    .catch(e => {
-                        console.log(e);
-                    });
-                this.snackbar = true;
-                //this.submitted = true;
-            },
-            newRoom() {
-                this.snackbar = false;
-                this.room = {};
+        // get snackBar(): boolean {
+        //     return this.snackbar;
+        // }
+
+        private saveRoom(): void {
+            const config = {
+                headers: {
+                    "Authorization": "Bearer " + sessionStorage.token
+                }
             }
-            /* eslint-enable no-console */
+            var data = {
+                name: this.room.name,
+            };
+
+            http
+                .post("/room", data, config)
+                .then(response => {
+                    this.room.id = response.data.id;
+                    console.log(response.data);
+                })
+                .catch(e => {
+                    console.log(e);
+                });
+            this.snackbar = true;
+        }
+
+        private newRoom(): void {
+            this.snackbar = false;
+            this.room = {id: 0, name: ""}
         }
     }
 </script>

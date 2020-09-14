@@ -1,6 +1,8 @@
 import Vue from "vue";
 import Router from "vue-router";
+
 Vue.use(Router);
+
 // @ts-ignore
 import RoomsList from './components/RoomsList';
 // @ts-ignore
@@ -17,6 +19,8 @@ import Login from "./components/Login";
 import Signup from "./components/Signup";
 // @ts-ignore
 import Logout from "./components/Logout";
+
+
 export default new Router({
     mode: "history",
     routes: [
@@ -66,4 +70,3 @@ export default new Router({
         }
     ]
 });
-//# sourceMappingURL=router.js.map
