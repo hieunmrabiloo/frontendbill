@@ -2,7 +2,7 @@
     <div id="app">
         <v-card>
             <v-card-title>
-                Room {{this.selectedRoom.name}}
+                RoomEntity {{this.selectedRoom.name}}
                 <v-spacer></v-spacer>
                 <v-text-field append-icon="mdi-magnify" hide-details label="Search" single-line v-model="search"/>
             </v-card-title>
@@ -43,6 +43,8 @@
     import http from "../http-common";
     import Swal from "sweetalert2";
     import {Component, Prop, Vue, Watch} from "vue-property-decorator";
+    // eslint-disable-next-line no-unused-vars
+    import RoomEntity from "../types/RoomEntity";
 
     Component.registerHooks([
         'beforeRouteEnter',
@@ -52,7 +54,6 @@
 
     @Component
     export default class BillsList extends Vue {
-        // name: "BillsList",
         loading: boolean = false;
         delLoading: boolean = false;
         page: number = 1;
@@ -63,19 +64,19 @@
         selected: Array<any> = [];
         headers: Array<any> = [
             { text: 'Month', value: 'monthBill', align: 'left', sortable: 'false' },
-            { text: 'Room Rates', value: 'roomRates' },
+            { text: 'RoomEntity Rates', value: 'roomRates' },
             { text: 'Electricity Number', value: 'elecNum' },
             { text: 'Electricity Price', value: 'elecPrice' },
             { text: 'Water Number', value: 'waterNum' },
             { text: 'Water Price', value: 'waterPrice' },
             { text: 'Others', value: 'other' },
-            { text: 'Total', value: 'totalPrice' },
+            { text: 'Total', value: 'totalPrice' }
         ];
-        id: Array<any> = [];
+        id: Array<string> = [];
         roomId: string = '';
-        selectedRoom: Array<any> = [];
-        bills: Array<any> = [];
-        @Prop() room!: object;
+        selectedRoom: Array<string> = [];
+        bills: Array<number> = [];
+        @Prop() room!: RoomEntity;
 
         @Watch('$route')
         routeChanged(val) {

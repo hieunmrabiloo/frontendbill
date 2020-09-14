@@ -30,7 +30,6 @@
 
     @Component
     export default class Login extends Vue {
-        // name: "login",
         valid: boolean = true;
         showPassword: boolean = false;
         username: string = "";

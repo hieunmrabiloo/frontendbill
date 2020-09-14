@@ -2,7 +2,7 @@
     <div id="app">
         <v-card>
             <v-card-title>
-                <h1 class="display-1">Room {{this.selectedRoom.name}}</h1>
+                <h1 class="display-1">RoomEntity {{this.selectedRoom.name}}</h1>
             </v-card-title>
             <v-card-text>
                 <v-alert border="left" dense type="info">
@@ -16,7 +16,7 @@
                         <thead>
                         <tr>
                             <th>Month</th>
-                            <th>Room Rates</th>
+                            <th>RoomEntity Rates</th>
                             <th>Electricity</th>
                             <th>Water</th>
                             <th>Other</th>
@@ -81,11 +81,13 @@
     import http from "../http-common";
     import Swal from "sweetalert2";
     import {Component, Prop, Vue, Watch} from "vue-property-decorator";
+    // eslint-disable-next-line no-unused-vars
+    import RoomEntity from "@/types/RoomEntity";
 
     @Component
     export default class Room extends Vue {
         loading: boolean = false;
-        selectedRoom: Array<any> = [];
+        selectedRoom: { id: string, name: string } = { id: "", name: ""};
         roomId: string = '';
         errors: Array<any> = [];
         preElecNum: number = 0;
@@ -101,7 +103,7 @@
         waterNum: number = 0;
         waterPrice: number = 0;
         other: number = 0;
-        @Prop() room!: object;
+        @Prop() room!: RoomEntity;
 
         get totalPrice(): number {
             return Number(this.roomRates) + Number((this.elecNum - this.preElecNum) * this.elecPrice)
@@ -126,7 +128,7 @@
             this.getRoom(this.roomId);
         }
 
-        getRoom(id): void {
+        getRoom(id: string): void {
             http
                 .get("/room/get/" + id)
                 .then(response => {

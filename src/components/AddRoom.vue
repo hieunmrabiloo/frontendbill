@@ -14,11 +14,11 @@
         <div v-else>
             <v-card class="mx-auto ma-2" max-width="300" v-if="!snackbar">
                 <v-card-title>
-                    <h3>Add Room</h3>
+                    <h3>Add RoomEntity</h3>
                 </v-card-title>
                 <v-card-text>
                     <v-form>
-                        <v-text-field label="Room Name" v-model="room.name"></v-text-field>
+                        <v-text-field label="RoomEntity Name" v-model="room.name"></v-text-field>
                     </v-form>
                 </v-card-text>
                 <v-card-actions>
@@ -40,12 +40,14 @@
 <script lang="ts">
     import http from "../http-common";
     import {Component, Vue} from "vue-property-decorator";
+    // eslint-disable-next-line no-unused-vars
+    import RoomEntity from "../types/RoomEntity";
 
     @Component
     export default class AddRoom extends Vue {
         // name: "AddRoom";
         snackbar: boolean = false;
-        room: { id: number, name: string, } = {id: 0, name: ""};
+        room: RoomEntity = {id: 0, name: ""};
         username: string = "";
 
         created() {

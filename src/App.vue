@@ -7,7 +7,7 @@
 
           <v-toolbar-title v-if="this.$route.path === '/'">Home</v-toolbar-title>
           <v-toolbar-title v-if="this.$route.path === '/rooms'">Rooms</v-toolbar-title>
-          <v-toolbar-title v-if="this.$route.path === '/addRoom'">Add Room</v-toolbar-title>
+          <v-toolbar-title v-if="this.$route.path === '/addRoom'">Add RoomEntity</v-toolbar-title>
           <v-toolbar-title v-if="this.$route.path === '/searchRoom'">Search</v-toolbar-title>
           <v-toolbar-title v-if="this.$route.path === '/login'">Login</v-toolbar-title>
           <v-toolbar-title v-if="this.$route.path === '/register'">Sign Up</v-toolbar-title>
@@ -78,7 +78,7 @@
                   <v-list-item-action>
                     <v-icon>mdi-home-plus</v-icon>
                   </v-list-item-action>
-                  <v-list-item-title>Add Room</v-list-item-title>
+                  <v-list-item-title>Add RoomEntity</v-list-item-title>
                 </v-list-item>
               </router-link>
             </v-list-item-group>

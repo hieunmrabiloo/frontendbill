@@ -34,6 +34,8 @@
     import http from "../http-common";
     import Swal from "sweetalert2";
     import {Vue, Component} from "vue-property-decorator";
+    // eslint-disable-next-line no-unused-vars
+    import RoomEntity from "@/types/RoomEntity";
 
     @Component
     export default class Signup extends Vue {
@@ -48,7 +50,7 @@
         ];
         rooms: Array<any> = [];
         roomName: Array<any> = [];
-        room: { id: number, name: string } = {id: 0, name: "",};
+        room: RoomEntity = {id: "", name: "",};
 
         mounted() {
             this.retrieveRooms();

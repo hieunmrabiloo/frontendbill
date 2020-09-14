@@ -6,7 +6,7 @@
             </v-card-title>
             <v-card-text>
                 <v-form>
-                    <v-text-field label="Room Name" v-model="name"></v-text-field>
+                    <v-text-field label="RoomEntity Name" v-model="name"></v-text-field>
                 </v-form>
             </v-card-text>
             <v-card-actions>
@@ -29,7 +29,7 @@
                                 <router-link :to="{name: 'room',params: {room: room, id: room.id}}"
                                              class="v-card--hover text-decoration-none">
                                     <v-icon>mdi-plus-box</v-icon>
-                                    <v-list-item-title v-text="'Room:'+room.name"></v-list-item-title>
+                                    <v-list-item-title v-text="'RoomEntity:'+room.name"></v-list-item-title>
                                 </router-link>
                             </v-list-item-content>
                             <v-list-item-content>
@@ -50,12 +50,14 @@
 <script lang="ts">
     import http from "../http-common";
     import {Component, Vue} from "vue-property-decorator";
+    // eslint-disable-next-line no-unused-vars
+    import RoomEntity from "@/types/RoomEntity";
 
     @Component
     export default class SearchRooms extends Vue {
         submitted: boolean = false;
         name: string = '';
-        rooms: Array<any> = [];
+        rooms: Array<RoomEntity> = [];
 
         searchRooms(): void {
             http

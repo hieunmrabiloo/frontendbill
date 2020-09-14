@@ -32,7 +32,7 @@
                                             <router-link :to="{name: 'room',params: {room: room, id: room.id}}"
                                                          class="hvr-icon-pulse text-decoration-none">
                                                 <v-icon class="hvr-icon">mdi-plus-box</v-icon>
-                                                <v-list-item-title v-text="'Room:'+room.name"></v-list-item-title>
+                                                <v-list-item-title v-text="'RoomEntity:'+room.name"></v-list-item-title>
                                             </router-link>
                                         </v-list-item-content>
                                         <v-list-item-content>
@@ -58,7 +58,7 @@
                                         <v-list-item-content>
                                             <router-link :to="{name: 'list-bill',params: {id: this.roomId}}"
                                                          class="custom-hover text-decoration-none">
-                                                <v-list-item-title v-text="'Room: '+this.roomName"></v-list-item-title>
+                                                <v-list-item-title v-text="'RoomEntity: '+this.roomName"></v-list-item-title>
                                             </router-link>
                                         </v-list-item-content>
                                     </v-list-item>
@@ -80,13 +80,13 @@
 <script lang="ts">
     import http from "../http-common";
     import {Component, Vue, Watch} from "vue-property-decorator";
+    // eslint-disable-next-line no-unused-vars
+    import RoomEntity from "@/types/RoomEntity";
 
     @Component
     export default class RoomsList extends Vue {
         loading: boolean = false;
-        hover: boolean = false;
-        selectedRoom: string = "1";
-        rooms: Array<any> = [];
+        rooms: Array<RoomEntity> = [];
         username: string = '';
         roomId: number = 0;
         roomName: string = '';
